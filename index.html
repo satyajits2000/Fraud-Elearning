@@ -2,1576 +2,380 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CV Fraud Detection — SYSTRA PMC Training</title>
-<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700;800&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SYSTRA — Fraud Awareness eLearning</title>
 <style>
-  /* ═══════════════════════════════════════
-     SYSTRA BRAND TOKENS
-     Major: #d22328 (SYSTRA Red), #003e4a, #647d6e, #643c5a, #5c7683, #2eb2b2, #559bb4
-     Minor (key picks): #73b140, #0078d4-ish → #5298d0, #ef8029, #f8b61d, #855182, #80c8be
-  ═══════════════════════════════════════ */
-  :root {
-    --systra-red:       #d22328;
-    --systra-red-dark:  #a51a1e;
-    --systra-red-light: #f9dede;
-    --systra-teal:      #003e4a;
-    --systra-teal-mid:  #5c7683;
-    --systra-teal-lt:   #2eb2b2;
-    --systra-teal-pale: #e8f4f4;
-    --systra-blue:      #559bb4;
-    --systra-blue-lt:   #e4eff4;
-    --systra-green:     #647d6e;
-    --systra-plum:      #643c5a;
-    --systra-orange:    #ef8029;
-    --systra-yellow:    #f8b61d;
-    --systra-violet:    #855182;
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap');
+:root {
+  --red:#d22328; --red-dark:#a81b1f; --red-lt:#fff0f0;
+  --teal:#003e4a; --teal-lt:#e8f4f6; --teal-mid:#005566;
+  --cyan:#2eb2b2; --slate:#5c7683; --slate-lt:#eef3f5;
+  --green:#1a7a40; --amber:#8a6000;
+  --text:#1a1a1a; --muted:#6b7280; --border:#e2e4e9;
+  --surface:#fff; --bg:#f4f5f7;
+  --head:'Barlow Condensed',sans-serif;
+  --body:'Barlow',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{background:var(--bg);font-family:var(--body);min-height:100vh;display:flex;flex-direction:column}
 
-    --correct: #73b140;
-    --correct-bg: #edf5e1;
-    --risky: #ef8029;
-    --risky-bg: #fef3e8;
-    --poor: #d22328;
-    --poor-bg: #f9dede;
+/* ── TOP ACCENT ── */
+.top-accent{height:5px;background:var(--red);flex-shrink:0}
 
-    --text: #1a1a2e;
-    --text-muted: #5c6b75;
-    --border: #dde4e8;
-    --surface: #ffffff;
-    --sidebar-bg: #f4f6f8;
+/* ── HEADER ── */
+header{
+  background:var(--teal);
+  padding:14px clamp(16px,5vw,56px);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;flex-wrap:wrap;gap:12px;
+  border-bottom:2px solid rgba(255,255,255,0.06)
+}
+.logo-wrap{display:flex;align-items:center;gap:16px}
+#site-logo{height:clamp(28px,4vw,40px);width:auto;display:none}
+.logo-text{
+  font-family:var(--head);font-size:clamp(22px,4vw,32px);
+  font-weight:900;color:#fff;letter-spacing:1px;line-height:1
+}
+.logo-text span{color:var(--red)}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hdr-badge{
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
+  color:rgba(255,255,255,0.8);font-size:12px;font-weight:600;
+  padding:5px 14px;border-radius:20px;white-space:nowrap
+}
+.hdr-badge.red{background:var(--red);border-color:var(--red);color:#fff}
 
-    --font-head: 'Raleway', sans-serif;
-    --font-body: 'Source Sans 3', sans-serif;
-  }
+/* ── HERO ── */
+.hero{
+  background:var(--teal);
+  padding:clamp(32px,7vh,64px) clamp(16px,5vw,56px) clamp(28px,6vh,56px);
+  flex-shrink:0;position:relative;overflow:hidden
+}
+.hero::before{
+  content:'';position:absolute;right:-100px;top:-100px;
+  width:500px;height:500px;border-radius:50%;
+  background:rgba(255,255,255,0.025);pointer-events:none
+}
+.hero::after{
+  content:'';position:absolute;right:80px;bottom:-80px;
+  width:280px;height:280px;border-radius:50%;
+  background:rgba(46,178,178,0.07);pointer-events:none
+}
+.hero-inner{max-width:860px;position:relative;z-index:1}
+.hero-eyebrow{
+  font-family:var(--head);font-size:clamp(10px,2vw,12px);
+  font-weight:600;letter-spacing:4px;
+  color:rgba(255,255,255,0.45);text-transform:uppercase;
+  margin-bottom:14px;display:flex;align-items:center;gap:12px
+}
+.hero-eyebrow::after{content:'';flex:0 0 36px;height:2px;background:var(--red)}
+.hero-title{
+  font-family:var(--head);
+  font-size:clamp(30px,6vw,60px);
+  font-weight:900;color:#fff;line-height:1.05;
+  letter-spacing:-0.5px;margin-bottom:16px
+}
+.hero-title em{color:var(--red);font-style:normal}
+.hero-sub{
+  font-size:clamp(13px,2.5vw,16px);
+  color:rgba(255,255,255,0.68);line-height:1.7;
+  max-width:580px;margin-bottom:28px
+}
+.hero-stats{display:flex;gap:clamp(16px,4vw,32px);flex-wrap:wrap}
+.hero-stat{text-align:left}
+.hero-stat-val{
+  font-family:var(--head);font-size:clamp(22px,4vw,32px);
+  font-weight:900;color:#fff;line-height:1
+}
+.hero-stat-label{
+  font-size:11px;color:rgba(255,255,255,0.45);
+  font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  margin-top:3px
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── CONTENT ── */
+.content{flex:1;padding:clamp(24px,5vw,48px) clamp(16px,5vw,56px)}
 
-  body {
-    font-family: var(--font-body);
-    background: #e8edf0;
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-  }
+/* ── SECTION LABEL ── */
+.section-label{
+  font-family:var(--head);font-size:11px;font-weight:700;
+  letter-spacing:3px;color:var(--muted);text-transform:uppercase;
+  margin-bottom:20px;display:flex;align-items:center;gap:12px
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
-  /* ─── APP SHELL ─── */
-  #app {
-    width: 100%;
-    max-width: 1140px;
-    min-height: 100vh;
-    background: var(--surface);
-    box-shadow: 0 0 60px rgba(0,62,74,0.18);
-    display: flex;
-    flex-direction: column;
-  }
+/* ── MODULE GRID ── */
+.modules-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(clamp(240px,30%,300px),1fr));
+  gap:16px;margin-bottom:40px
+}
 
-  /* ─── TOP BAR ─── */
-  .topbar {
-    background: var(--systra-teal);
-    color: white;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    height: 52px;
-    gap: 16px;
-    flex-shrink: 0;
-    position: relative;
-  }
-  .topbar-logo-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-right: 18px;
-    border-right: 1px solid rgba(255,255,255,0.2);
-  }
-  .topbar-logo-img {
-    height: 28px;
-    width: auto;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
-  }
-  .topbar-logo-fallback {
-    font-family: var(--font-head);
-    font-weight: 800;
-    font-size: 20px;
-    letter-spacing: 2px;
-    color: white;
-    text-transform: uppercase;
-  }
-  .topbar-logo-fallback span { color: var(--systra-red); }
-  .topbar-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
-  .topbar-course {
-    font-family: var(--font-body);
-    font-size: 13px;
-    opacity: 0.85;
-    flex: 1;
-    letter-spacing: 0.2px;
-  }
-  .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .sound-btn {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: white;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    font-family: var(--font-body);
-    transition: background 0.2s;
-    letter-spacing: 0.3px;
-  }
-  .sound-btn:hover { background: rgba(255,255,255,0.22); }
+/* ── MODULE CARD ── */
+.mod-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
+  display:flex;flex-direction:column;
+  text-decoration:none;
+  transition:transform 0.2s,box-shadow 0.2s;
+  cursor:pointer
+}
+.mod-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.1)}
+.mod-card:active{transform:translateY(-1px)}
+.mod-card-stripe{height:5px;flex-shrink:0}
+.mod-card-body{padding:clamp(16px,3vw,22px);flex:1}
+.mod-num{
+  font-family:var(--head);font-size:11px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+  margin-bottom:8px
+}
+.mod-title{
+  font-family:var(--head);font-size:clamp(17px,3vw,22px);
+  font-weight:700;color:var(--text);line-height:1.2;margin-bottom:8px
+}
+.mod-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+.mod-tags{display:flex;gap:6px;flex-wrap:wrap}
+.mod-tag{
+  background:#f3f4f6;border-radius:3px;
+  padding:3px 9px;font-size:11px;color:var(--muted);font-weight:500
+}
+.mod-card-foot{
+  padding:12px clamp(16px,3vw,22px);
+  background:#fafafa;border-top:1px solid #f0f0f0;
+  display:flex;align-items:center;justify-content:space-between
+}
+.mod-status{font-size:12px;font-weight:600;color:var(--teal)}
+.mod-arrow{font-size:18px;color:var(--red);font-weight:700}
 
-  /* ─── RED ACCENT STRIPE ─── */
-  .red-stripe {
-    height: 4px;
-    background: linear-gradient(90deg, var(--systra-red) 0%, #ef8029 60%, #f8b61d 100%);
-    flex-shrink: 0;
-  }
+/* ── LOADING / EMPTY STATES ── */
+.loading-grid{display:flex;flex-direction:column;gap:10px}
+.skeleton{
+  background:#e9eaec;border-radius:8px;height:160px;
+  animation:shimmer 1.5s ease infinite;
+}
+@keyframes shimmer{0%,100%{opacity:1}50%{opacity:0.55}}
+.empty-state{
+  text-align:center;padding:clamp(32px,8vh,64px) 20px;
+  color:var(--muted)
+}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.empty-sub{font-size:13px;line-height:1.6;max-width:340px;margin:0 auto}
 
-  /* ─── PROGRESS ─── */
-  .progress-wrap {
-    background: var(--systra-teal);
-    height: 3px;
-    flex-shrink: 0;
-  }
-  .progress-fill {
-    background: var(--systra-teal-lt);
-    height: 100%;
-    transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
-  }
+/* ── NOTICE ── */
+.notice{
+  background:var(--surface);
+  border:1px solid var(--border);border-left:4px solid var(--teal);
+  border-radius:0 7px 7px 0;
+  padding:14px 18px;margin-bottom:36px;
+  font-size:13px;color:var(--muted);line-height:1.65
+}
+.notice strong{color:var(--text)}
 
-  /* ─── MAIN LAYOUT ─── */
-  .main-layout {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-  }
+/* ── FOOTER ── */
+footer{
+  background:var(--teal);
+  padding:18px clamp(16px,5vw,56px);
+  flex-shrink:0;border-top:2px solid var(--red)
+}
+.footer-inner{
+  display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:10px
+}
+.footer-logo-text{
+  font-family:var(--head);font-size:18px;
+  font-weight:900;color:rgba(255,255,255,0.7);letter-spacing:1px
+}
+#footer-logo{height:22px;width:auto;opacity:0.6;display:none}
+.footer-text{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:1px}
 
-  /* ─── SIDEBAR ─── */
-  .sidebar {
-    width: 232px;
-    background: var(--sidebar-bg);
-    border-right: 1px solid var(--border);
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-  }
-
-  /* Sidebar logo block */
-  .sidebar-brand {
-    padding: 18px 16px 14px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .sidebar-brand-img {
-    height: 32px;
-    width: auto;
-    object-fit: contain;
-    object-position: left;
-  }
-  .sidebar-brand-tagline {
-    font-family: var(--font-body);
-    font-size: 10px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
-  }
-
-  .sidebar-section { padding: 8px 0; border-bottom: 1px solid var(--border); }
-  .sidebar-header {
-    font-family: var(--font-head);
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--systra-red);
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    padding: 6px 16px 4px;
-  }
-  .sidebar-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 16px;
-    cursor: pointer;
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: var(--text);
-    transition: background 0.15s;
-    border-left: 3px solid transparent;
-    line-height: 1.3;
-  }
-  .sidebar-item:hover { background: #e2e8ec; }
-  .sidebar-item.active {
-    background: #dce8ea;
-    border-left-color: var(--systra-teal);
-    font-weight: 600;
-    color: var(--systra-teal);
-  }
-  .sidebar-item.locked { opacity: 0.35; cursor: not-allowed; }
-  .sidebar-item.completed .scene-dot { background: var(--correct); }
-  .scene-dot {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: var(--border); flex-shrink: 0;
-    transition: background 0.3s;
-  }
-  .sidebar-item.active .scene-dot { background: var(--systra-teal); }
-  .scene-num { font-size: 10px; color: var(--text-muted); margin-left: auto; }
-
-  .sidebar-score-block {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .score-label {
-    font-family: var(--font-head);
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--systra-red);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-  }
-  .score-val {
-    font-family: var(--font-head);
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--systra-teal);
-    line-height: 1;
-  }
-  .score-of { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-  .sidebar-key {
-    padding: 12px 16px;
-  }
-  .key-item {
-    display: flex; align-items: center; gap: 7px;
-    font-size: 11.5px; color: var(--text-muted);
-    margin-bottom: 5px;
-  }
-  .key-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  }
-
-  /* ─── CONTENT AREA ─── */
-  .content-area {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    background: #f8f9fb;
-  }
-
-  /* ─── SCENE PANELS ─── */
-  .scene-panel {
-    display: none;
-    flex-direction: column;
-    flex: 1;
-    animation: fadeUp 0.38s ease;
-  }
-  .scene-panel.active { display: flex; }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ─── SCENE HEADER ─── */
-  .scene-header {
-    background: linear-gradient(135deg, var(--systra-teal) 0%, #005d70 60%, #0a7a8c 100%);
-    color: white;
-    padding: 22px 28px 20px;
-    display: flex;
-    align-items: flex-start;
-    gap: 18px;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-  }
-  .scene-header::after {
-    content: '';
-    position: absolute;
-    right: -30px; bottom: -40px;
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.04);
-  }
-  .scene-header::before {
-    content: '';
-    position: absolute;
-    right: 60px; bottom: -60px;
-    width: 240px; height: 240px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.03);
-  }
-  .scene-icon-wrap {
-    width: 52px; height: 52px;
-    background: rgba(255,255,255,0.12);
-    border: 1.5px solid rgba(255,255,255,0.2);
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px; flex-shrink: 0;
-  }
-  .scene-meta { flex: 1; z-index: 1; }
-  .scene-badge {
-    display: inline-block;
-    font-family: var(--font-head);
-    font-size: 9px; font-weight: 700;
-    letter-spacing: 1.8px; text-transform: uppercase;
-    background: var(--systra-red);
-    padding: 3px 10px; border-radius: 20px;
-    margin-bottom: 8px;
-  }
-  .scene-title {
-    font-family: var(--font-head);
-    font-size: 22px; font-weight: 800;
-    line-height: 1.15; margin-bottom: 4px;
-    letter-spacing: -0.3px;
-  }
-  .scene-subtitle { font-size: 13px; opacity: 0.78; font-weight: 300; }
-  .scene-pts-badge {
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.22);
-    border-radius: 10px; padding: 10px 18px;
-    text-align: center; flex-shrink: 0; z-index: 1;
-    min-width: 90px;
-  }
-  .scene-pts-label {
-    font-family: var(--font-head);
-    font-size: 9px; opacity: 0.8;
-    letter-spacing: 1px; text-transform: uppercase;
-    margin-bottom: 3px;
-  }
-  .scene-pts-val {
-    font-family: var(--font-head);
-    font-size: 24px; font-weight: 800;
-    color: #50e6ff;
-  }
-
-  /* ─── ALERT BAR ─── */
-  .alert-bar {
-    display: flex; gap: 12px; align-items: flex-start;
-    padding: 11px 20px;
-    font-size: 13px; line-height: 1.5;
-    flex-shrink: 0;
-    border-bottom: 1px solid transparent;
-  }
-  .alert-bar.warning {
-    background: #fff8e6; border-left: 4px solid var(--systra-yellow);
-    border-bottom-color: #f5e5a0; color: #5a3e00;
-  }
-  .alert-bar.danger {
-    background: var(--poor-bg); border-left: 4px solid var(--systra-red);
-    border-bottom-color: #f0c0c2; color: #5c1012;
-  }
-  .alert-bar.success {
-    background: var(--correct-bg); border-left: 4px solid var(--correct);
-    border-bottom-color: #c8e8a8; color: #2a4a10;
-  }
-  .alert-icon { font-size: 17px; margin-top: 1px; flex-shrink: 0; }
-  .alert-bar strong {
-    display: block;
-    font-family: var(--font-head);
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.8px;
-    margin-bottom: 2px;
-  }
-
-  /* ─── EMAIL PANE ─── */
-  .email-pane { padding: 16px 20px 8px; flex-shrink: 0; }
-  .email-thread-label {
-    font-family: var(--font-head);
-    font-size: 10px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 1.2px;
-    color: var(--systra-red);
-    margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .email-thread-label::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-
-  .email-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px; margin-bottom: 7px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,62,74,0.06);
-    transition: box-shadow 0.2s;
-  }
-  .email-card:hover { box-shadow: 0 3px 10px rgba(0,62,74,0.1); }
-  .email-card.unread { border-left: 3px solid var(--systra-teal); }
-  .email-card.urgent { border-left: 3px solid var(--systra-red); }
-  .email-card.positive { border-left: 3px solid var(--correct); }
-
-  .email-header {
-    display: flex; align-items: center; gap: 11px;
-    padding: 9px 14px; cursor: pointer;
-    background: #f8f9fb;
-    border-bottom: 1px solid var(--border);
-    user-select: none;
-    transition: background 0.15s;
-  }
-  .email-header:hover { background: #eef2f5; }
-
-  .email-avatar {
-    width: 34px; height: 34px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-head);
-    font-size: 13px; font-weight: 700;
-    color: white; flex-shrink: 0;
-  }
-  .email-from {
-    font-family: var(--font-body);
-    font-size: 12.5px; font-weight: 700; color: var(--text);
-  }
-  .email-preview { font-size: 11.5px; color: var(--text-muted); }
-  .email-time {
-    font-size: 11px; color: var(--text-muted);
-    margin-left: auto; white-space: nowrap;
-  }
-  .email-toggle {
-    font-size: 10px; color: var(--text-muted);
-    margin-left: 6px; transition: transform 0.2s;
-  }
-  .email-toggle.open { transform: rotate(180deg); }
-
-  .email-body {
-    padding: 13px 16px;
-    font-size: 13px; line-height: 1.65; color: var(--text);
-    display: none;
-    border-top: none;
-  }
-  .email-body.open { display: block; }
-  .email-body p { margin-bottom: 9px; }
-  .email-body p:last-child { margin-bottom: 0; }
-  .email-sig {
-    margin-top: 11px; padding-top: 10px;
-    border-top: 1px solid var(--border);
-    font-size: 11.5px; color: var(--text-muted);
-  }
-  .email-attachment {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--systra-teal-pale);
-    border: 1px solid #b5d8d8;
-    border-radius: 4px; padding: 4px 11px;
-    font-size: 11.5px; color: var(--systra-teal);
-    margin-top: 8px; cursor: pointer;
-    font-weight: 600;
-  }
-
-  /* ─── CONTEXT BOX ─── */
-  .context-box {
-    margin: 4px 20px 10px;
-    background: linear-gradient(135deg, #eef5f7 0%, #e8f4f4 100%);
-    border: 1px solid #c0d8dc;
-    border-left: 4px solid var(--systra-teal);
-    border-radius: 6px;
-    padding: 13px 18px;
-    font-size: 13.5px; color: var(--text); line-height: 1.65;
-    flex-shrink: 0;
-  }
-  .ctx-label {
-    font-family: var(--font-head);
-    font-size: 9.5px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 1.2px;
-    color: var(--systra-teal);
-    margin-bottom: 6px;
-    display: flex; align-items: center; gap: 5px;
-  }
-
-  /* ─── QUESTION ZONE ─── */
-  .question-zone { padding: 0 20px 14px; flex-shrink: 0; }
-  .question-text {
-    font-family: var(--font-head);
-    font-size: 15px; font-weight: 700; color: var(--systra-teal);
-    margin-bottom: 12px; padding-bottom: 10px;
-    border-bottom: 2px solid var(--systra-teal-pale);
-  }
-  .options-grid { display: flex; flex-direction: column; gap: 8px; }
-
-  .option-btn {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 13px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px; background: var(--surface);
-    cursor: pointer; text-align: left;
-    transition: all 0.2s; font-family: var(--font-body);
-    font-size: 13.5px; color: var(--text); line-height: 1.45;
-    position: relative; overflow: hidden;
-  }
-  .option-btn:hover:not(:disabled) {
-    border-color: var(--systra-teal);
-    background: var(--systra-teal-pale);
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0,62,74,0.1);
-  }
-  .option-btn:disabled { cursor: not-allowed; }
-
-  .option-letter {
-    width: 30px; height: 30px; border-radius: 50%;
-    background: var(--systra-teal-pale);
-    color: var(--systra-teal);
-    font-family: var(--font-head);
-    font-weight: 800; font-size: 13px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px; transition: all 0.2s;
-  }
-  .option-text { flex: 1; }
-
-  /* Feedback states */
-  .option-btn.correct { border-color: var(--correct); background: var(--correct-bg); }
-  .option-btn.correct .option-letter { background: var(--correct); color: white; }
-  .option-btn.risky   { border-color: var(--risky);   background: var(--risky-bg); }
-  .option-btn.risky   .option-letter { background: var(--risky); color: white; }
-  .option-btn.poor    { border-color: var(--poor);    background: var(--poor-bg); }
-  .option-btn.poor    .option-letter { background: var(--poor); color: white; }
-
-  .option-badge {
-    font-family: var(--font-head);
-    font-size: 10px; font-weight: 700;
-    padding: 3px 9px; border-radius: 20px;
-    margin-left: auto; flex-shrink: 0;
-    align-self: flex-start; margin-top: 3px;
-    letter-spacing: 0.5px;
-  }
-  .badge-correct { background: var(--correct-bg); color: var(--correct); }
-  .badge-risky   { background: var(--risky-bg);   color: var(--risky); }
-  .badge-poor    { background: var(--poor-bg);     color: var(--poor); }
-
-  /* ─── DEBRIEF ─── */
-  .debrief-panel {
-    display: none; margin: 0 20px 14px;
-    border-radius: 10px; overflow: hidden; border: 1.5px solid;
-    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  }
-  .debrief-panel.show { display: block; }
-  @keyframes popIn {
-    from { opacity:0; transform:scale(0.94) translateY(8px); }
-    to   { opacity:1; transform:scale(1) translateY(0); }
-  }
-  .debrief-panel.correct { border-color: var(--correct); }
-  .debrief-panel.risky   { border-color: var(--risky); }
-  .debrief-panel.poor    { border-color: var(--poor); }
-
-  .debrief-header {
-    padding: 12px 18px; display: flex; align-items: center; gap: 10px;
-    font-family: var(--font-head); font-weight: 700; font-size: 14px; color: white;
-  }
-  .debrief-panel.correct .debrief-header { background: var(--correct); }
-  .debrief-panel.risky   .debrief-header { background: var(--risky); }
-  .debrief-panel.poor    .debrief-header { background: var(--poor); }
-
-  .debrief-body {
-    padding: 14px 18px; font-size: 13.5px; line-height: 1.65; color: var(--text);
-  }
-  .debrief-panel.correct .debrief-body { background: var(--correct-bg); }
-  .debrief-panel.risky   .debrief-body { background: var(--risky-bg); }
-  .debrief-panel.poor    .debrief-body { background: var(--poor-bg); }
-
-  .debrief-lesson {
-    margin-top: 10px; padding: 10px 14px;
-    background: rgba(0,0,0,0.05); border-radius: 6px;
-    font-size: 12.5px; font-style: italic; line-height: 1.6;
-  }
-  .debrief-lesson strong { font-style: normal; color: var(--text); }
-
-  /* ─── CONTINUE BTN ─── */
-  .continue-row { padding: 6px 20px 20px; flex-shrink: 0; }
-  .continue-btn {
-    background: var(--systra-red);
-    color: white; border: none; border-radius: 6px;
-    padding: 12px 28px; font-size: 14px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center; gap: 8px;
-    transition: background 0.2s, transform 0.15s;
-    font-family: var(--font-head); letter-spacing: 0.3px;
-  }
-  .continue-btn:hover { background: var(--systra-red-dark); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(210,35,40,0.25); }
-  .continue-btn:disabled { background: #c8c6c4; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  /* ─── INTRO SCREEN ─── */
-  #intro-screen {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 40px 32px; flex: 1; text-align: center;
-    background: linear-gradient(160deg, #001f28 0%, var(--systra-teal) 55%, #0d7a8c 100%);
-    color: white; animation: fadeUp 0.5s ease;
-  }
-  .intro-logo-wrap {
-    margin-bottom: 28px;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-  }
-  .intro-logo-img {
-    height: 48px; width: auto;
-    filter: brightness(0) invert(1);
-    object-fit: contain;
-  }
-  .intro-logo-fallback {
-    font-family: var(--font-head);
-    font-size: 36px; font-weight: 800;
-    letter-spacing: 4px; text-transform: uppercase;
-  }
-  .intro-logo-fallback span { color: var(--systra-red); }
-  .intro-logo-sub {
-    font-size: 10px; letter-spacing: 2px; opacity: 0.6;
-    text-transform: uppercase; font-weight: 600;
-  }
-
-  .intro-icon-wrap {
-    width: 92px; height: 92px;
-    background: rgba(255,255,255,0.08);
-    border: 2px solid rgba(255,255,255,0.18);
-    border-radius: 24px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 46px; margin-bottom: 22px;
-    animation: pulseGlow 3s ease-in-out infinite;
-  }
-  @keyframes pulseGlow {
-    0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.08); }
-    50%      { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
-  }
-
-  .intro-red-bar {
-    width: 48px; height: 3px;
-    background: var(--systra-red); border-radius: 2px;
-    margin: 0 auto 18px;
-  }
-  .intro-title {
-    font-family: var(--font-head);
-    font-size: 30px; font-weight: 800; line-height: 1.15; margin-bottom: 12px;
-    letter-spacing: -0.5px;
-  }
-  .intro-sub {
-    font-size: 14px; opacity: 0.82; max-width: 520px;
-    line-height: 1.7; margin-bottom: 30px;
-  }
-
-  .intro-stats {
-    display: flex; gap: 14px; margin-bottom: 34px;
-    flex-wrap: wrap; justify-content: center;
-  }
-  .intro-stat {
-    background: rgba(255,255,255,0.09);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 10px; padding: 14px 20px;
-    min-width: 105px; text-align: center;
-  }
-  .intro-stat-num {
-    font-family: var(--font-head);
-    font-size: 26px; font-weight: 800; color: #50e6ff; display: block;
-  }
-  .intro-stat-label { font-size: 11px; opacity: 0.75; margin-top: 2px; }
-
-  .start-btn {
-    background: var(--systra-red); color: white;
-    border: none; border-radius: 8px;
-    padding: 14px 44px; font-size: 16px; font-weight: 800;
-    cursor: pointer; font-family: var(--font-head);
-    letter-spacing: 0.5px; text-transform: uppercase;
-    transition: all 0.2s;
-  }
-  .start-btn:hover {
-    background: #b51b1f; transform: translateY(-3px);
-    box-shadow: 0 10px 28px rgba(210,35,40,0.4);
-  }
-
-  /* ─── RESULTS SCREEN ─── */
-  #results-screen {
-    display: none; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 40px 32px; flex: 1; text-align: center;
-    background: linear-gradient(160deg, #001f28 0%, var(--systra-teal) 55%, #0d7a8c 100%);
-    color: white; animation: fadeUp 0.5s ease;
-  }
-  .results-logo-wrap { margin-bottom: 24px; }
-  .results-ring {
-    width: 140px; height: 140px; border-radius: 50%;
-    border: 6px solid rgba(255,255,255,0.18);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 22px; position: relative;
-  }
-  .results-ring::after {
-    content: ''; position: absolute; inset: -6px; border-radius: 50%;
-    border: 6px solid var(--systra-red);
-    clip-path: inset(0);
-    animation: ringFill 1.5s ease forwards;
-  }
-  @keyframes ringFill {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  .results-score {
-    font-family: var(--font-head);
-    font-size: 40px; font-weight: 800; color: #50e6ff; z-index: 1;
-  }
-  .results-score-pts { font-size: 14px; opacity: 0.7; margin-top: -6px; }
-
-  .results-title {
-    font-family: var(--font-head);
-    font-size: 26px; font-weight: 800; margin-bottom: 10px;
-  }
-  .results-sub {
-    font-size: 14px; opacity: 0.82; max-width: 500px;
-    line-height: 1.7; margin-bottom: 28px;
-  }
-  .results-chips {
-    display: flex; gap: 14px; margin-bottom: 32px; flex-wrap: wrap; justify-content: center;
-  }
-  .result-chip {
-    border-radius: 10px; padding: 12px 22px;
-    font-size: 13px; font-weight: 600; min-width: 90px;
-    font-family: var(--font-head);
-  }
-  .result-chip span {
-    display: block; font-size: 28px; font-weight: 800; margin-bottom: 2px;
-  }
-  .chip-correct { background: #dff6dd; color: var(--correct); }
-  .chip-risky   { background: #fff4e5; color: var(--risky); }
-  .chip-poor    { background: #fde7e9; color: var(--poor); }
-
-  .replay-btn {
-    background: rgba(255,255,255,0.12);
-    border: 2px solid rgba(255,255,255,0.28);
-    color: white; border-radius: 8px;
-    padding: 12px 38px; font-size: 15px; font-weight: 700;
-    cursor: pointer; font-family: var(--font-head);
-    transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .replay-btn:hover { background: rgba(255,255,255,0.22); transform: translateY(-2px); }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 700px) {
-    .sidebar { display: none; }
-  }
+@media(max-width:580px){
+  .modules-grid{grid-template-columns:1fr}
+  .hero-stats{gap:20px}
+}
 </style>
 </head>
 <body>
-<div id="app">
 
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="topbar-logo-wrap">
-      <img src="Logo_SYSTRA.png" class="topbar-logo-img" alt="SYSTRA"
-        onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-      <div class="topbar-logo-fallback" style="display:none">SYS<span>TRA</span></div>
-    </div>
-    <div class="topbar-course">Internal Control Training &nbsp;·&nbsp; CV Fraud Detection — Interactive Module</div>
-    <div class="topbar-right">
-      <button class="sound-btn" id="soundToggle" onclick="toggleSound()">🔊 Sound On</button>
+<div class="top-accent"></div>
+
+<header>
+  <div class="logo-wrap">
+    <img id="site-logo" src="Logo_SYSTRA.png" alt="SYSTRA">
+    <div class="logo-text" id="logo-fallback">SYS<span>T</span>RA</div>
+  </div>
+  <div class="header-right">
+    <div class="hdr-badge">eLearning Portal</div>
+    <div class="hdr-badge red" id="module-count-badge">Loading...</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">SYSTRA PMC · Compliance Training</div>
+    <div class="hero-title">Fraud Awareness<br><em>eLearning</em></div>
+    <div class="hero-sub">Interactive scenario-based training for all SYSTRA PMC staff. Each module presents a real-world incident — your decisions shape the outcome. New modules are added automatically as they become available.</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="stat-modules">—</div>
+        <div class="hero-stat-label">Modules</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="stat-time">—</div>
+        <div class="hero-stat-label">Est. Total Time</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">All</div>
+        <div class="hero-stat-label">Devices</div>
+      </div>
     </div>
   </div>
-  <div class="red-stripe"></div>
-  <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
 
-  <!-- LAYOUT -->
-  <div class="main-layout">
+<div class="content">
+  <div class="section-label" id="section-label">Training Modules</div>
+  <div class="modules-grid" id="modules-grid">
+    <!-- Skeleton loading -->
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </div>
 
-    <!-- SIDEBAR -->
-    <nav class="sidebar" id="sidebar">
-      <div class="sidebar-brand">
-        <img src="Logo_SYSTRA.png" class="sidebar-brand-img" alt="SYSTRA"
-          onerror="this.style.display='none'">
-        <div class="sidebar-brand-tagline">Internal Control</div>
-      </div>
+  <div class="notice">
+    <strong>Important:</strong> All modules are mandatory for SYSTRA PMC staff. Scenarios are fictional but based on real-world fraud patterns. Your responses are anonymously tracked to help improve training effectiveness. New modules are added to this portal automatically — check back regularly.
+  </div>
+</div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-header">📁 Case Inbox</div>
-        <div class="sidebar-item active" id="nav-0" onclick="navTo(0)">
-          <div class="scene-dot"></div>
-          Briefing
-          <span class="scene-num">Intro</span>
-        </div>
-        <div class="sidebar-item locked" id="nav-1" onclick="navTo(1)">
-          <div class="scene-dot"></div>
-          Stellar CV Arrives
-          <span class="scene-num">1 / 5</span>
-        </div>
-        <div class="sidebar-item locked" id="nav-2" onclick="navTo(2)">
-          <div class="scene-dot"></div>
-          Red Flags Emerge
-          <span class="scene-num">2 / 5</span>
-        </div>
-        <div class="sidebar-item locked" id="nav-3" onclick="navTo(3)">
-          <div class="scene-dot"></div>
-          He's Already Working
-          <span class="scene-num">3 / 5</span>
-        </div>
-        <div class="sidebar-item locked" id="nav-4" onclick="navTo(4)">
-          <div class="scene-dot"></div>
-          Telling the Client
-          <span class="scene-num">4 / 5</span>
-        </div>
-        <div class="sidebar-item locked" id="nav-5" onclick="navTo(5)">
-          <div class="scene-dot"></div>
-          Building Safeguards
-          <span class="scene-num">5 / 5</span>
-        </div>
-      </div>
-
-      <div class="sidebar-score-block">
-        <div class="score-label">My Score</div>
-        <div class="score-val" id="sideScore">0</div>
-        <div class="score-of">out of 50 points</div>
-      </div>
-
-      <div class="sidebar-key">
-        <div class="key-item"><div class="key-dot" style="background:var(--correct)"></div> Best choice — 10 pts</div>
-        <div class="key-item"><div class="key-dot" style="background:var(--risky)"></div> Risky choice — 4 pts</div>
-        <div class="key-item"><div class="key-dot" style="background:var(--poor)"></div> Poor choice — 0 pts</div>
-      </div>
-    </nav>
-
-    <!-- CONTENT -->
-    <div class="content-area" id="contentArea">
-
-      <!-- ══════════════════════ INTRO ══════════════════════ -->
-      <div id="intro-screen">
-        <div class="intro-logo-wrap">
-          <img src="Logo_SYSTRA.png" class="intro-logo-img" alt="SYSTRA"
-            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="intro-logo-fallback" style="display:none">SYS<span>TRA</span></div>
-          <div class="intro-logo-sub">Ethics &amp; Compliance Training</div>
-        </div>
-
-        <div class="intro-icon-wrap">🔍</div>
-        <div class="intro-red-bar"></div>
-        <div class="intro-title">CV Fraud Detection</div>
-        <div class="intro-sub">
-          You are a PMC Representative on a major Metro construction project. A candidate with an outstanding CV applies for Lead Structural Engineer. Every decision carries real consequences — for the project, the team, and public safety.
-        </div>
-
-        <div class="intro-stats">
-          <div class="intro-stat"><span class="intro-stat-num">5</span>Scenes</div>
-          <div class="intro-stat"><span class="intro-stat-num">15</span>Decisions</div>
-          <div class="intro-stat"><span class="intro-stat-num">50</span>Points</div>
-          <div class="intro-stat"><span class="intro-stat-num">~8</span>Minutes</div>
-        </div>
-
-        <button class="start-btn" onclick="startModule()">▶ &nbsp;Start Training</button>
-      </div>
-
-      <!-- ══════════════════════ RESULTS ══════════════════════ -->
-      <div id="results-screen">
-        <div class="results-logo-wrap">
-          <img src="Logo_SYSTRA.png" style="height:36px;filter:brightness(0)invert(1);object-fit:contain" alt="SYSTRA"
-            onerror="this.style.display='none'">
-        </div>
-        <div class="results-ring">
-          <div>
-            <div class="results-score" id="finalScore">0</div>
-            <div class="results-score-pts">/ 50 pts</div>
-          </div>
-        </div>
-        <div class="results-title" id="resultsTitle">Training Complete</div>
-        <div class="results-sub" id="resultsSub"></div>
-        <div class="results-chips">
-          <div class="result-chip chip-correct"><span id="countCorrect">0</span>✅ Best</div>
-          <div class="result-chip chip-risky"><span id="countRisky">0</span>⚠ Risky</div>
-          <div class="result-chip chip-poor"><span id="countPoor">0</span>❌ Poor</div>
-        </div>
-        <button class="replay-btn" onclick="replayModule()">↩ &nbsp;Replay Module</button>
-      </div>
-
-      <!-- ══════════════════════════════════════════
-           SCENE 1 — A STELLAR CV ARRIVES
-      ══════════════════════════════════════════ -->
-      <div class="scene-panel" id="scene-1">
-        <div class="scene-header">
-          <div class="scene-icon-wrap">📨</div>
-          <div class="scene-meta">
-            <div class="scene-badge">Scene 1 of 5</div>
-            <div class="scene-title">A Stellar CV Arrives</div>
-            <div class="scene-subtitle">Recruitment under pressure — the clock is ticking</div>
-          </div>
-          <div class="scene-pts-badge">
-            <div class="scene-pts-label">Scene Score</div>
-            <div class="scene-pts-val" id="s1-score">—</div>
-          </div>
-        </div>
-
-        <div class="alert-bar warning">
-          <div class="alert-icon">⚠️</div>
-          <div><strong>Recruitment Pressure Alert</strong>Client requires mobilisation within 5 days — otherwise SYSTRA incurs a penalty for non-deployment. Shortlist finalised. Reference checks pending.</div>
-        </div>
-
-        <div class="email-pane">
-          <div class="email-thread-label">📬 Email Thread</div>
-
-          <div class="email-card urgent">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:var(--systra-red)">SC</div>
-              <div>
-                <div class="email-from">Sarah Chen — Project Director, SYSTRA</div>
-                <div class="email-preview">Urgent: Mr. X onboarding needed within two days</div>
-              </div>
-              <div class="email-time">09:14</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body open">
-              <p>Team,</p>
-              <p>We have an urgent situation. The Metro Authority is pressing for full mobilisation by end of week. Mr. X's CV is outstanding — Civil Engineering from a top institution, 10+ years on metro and railway projects, strong references listed.</p>
-              <p>The Project Director wants him onboarded <strong>within two days.</strong> I understand verification is still pending, but penalty exposure is significant and the client will not wait.</p>
-              <div class="email-sig">Sarah Chen &nbsp;|&nbsp; Project Director, Metro PMC &nbsp;·&nbsp; SYSTRA</div>
-            </div>
-          </div>
-
-          <div class="email-card unread">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:var(--systra-teal-mid)">JO</div>
-              <div>
-                <div class="email-from">James Okafor — HR Manager, SYSTRA</div>
-                <div class="email-preview">RE: Mr. X — CV attached for review, verification in progress</div>
-              </div>
-              <div class="email-time">08:47</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body">
-              <p>Hi team,</p>
-              <p>Please find Mr. X's CV attached. Highlights: B.Eng Civil Engineering (National Engineering College, 2011), 10 years metro/rail projects across three major firms including AB Group Ltd.</p>
-              <p>Background verification is still in progress. Awaiting responses from the university registrar and AB Group HR.</p>
-              <div class="email-attachment">📎 CV_MrX_LeadStructuralEngineer.pdf</div>
-              <div class="email-sig">James Okafor &nbsp;|&nbsp; HR Manager &nbsp;·&nbsp; SYSTRA</div>
-            </div>
-          </div>
-
-          <div class="email-card urgent">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:#5a1010">MA</div>
-              <div>
-                <div class="email-from">Metro Authority — Client</div>
-                <div class="email-preview">⚠ PENALTY NOTICE: Mobilisation Delay — Clause 12.4</div>
-              </div>
-              <div class="email-time">07:30</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body">
-              <p>Dear SYSTRA,</p>
-              <p>As per Clause 12.4 of our PMC Agreement, failure to deploy a verified Lead Structural Engineer by Day 5 will result in liquidated damages of <strong>£12,500 per day.</strong></p>
-              <p>Please confirm mobilisation status by return.</p>
-              <div class="email-sig">Director of Infrastructure &nbsp;·&nbsp; Metro Authority</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="context-box">
-          <div class="ctx-label">📋 Your Situation</div>
-          SYSTRA is PMC on a major Metro project. The client is pressing for mobilisation within two days. Mr. X's CV looks outstanding — Civil Engineering from a reputed college, 10+ years on metro and railway projects. The HR Manager says verification is still pending. The HR Manager calls: <em>"The Project Director wants him onboarded within two days."</em> How do you proceed?
-        </div>
-
-        <div class="question-zone">
-          <div class="question-text">❓ How do you proceed?</div>
-          <div class="options-grid" id="opts-1">
-            <button class="option-btn" onclick="choose(1,'A','poor')" id="s1-A">
-              <div class="option-letter">A</div>
-              <div class="option-text">Approve onboarding immediately — the CV looks excellent and the timeline is critical.</div>
-            </button>
-            <button class="option-btn" onclick="choose(1,'B','correct')" id="s1-B">
-              <div class="option-letter">B</div>
-              <div class="option-text">Proceed with structured background verification — degree, references, professional body — before any offer is made.</div>
-            </button>
-            <button class="option-btn" onclick="choose(1,'C','risky')" id="s1-C">
-              <div class="option-letter">C</div>
-              <div class="option-text">Ask the candidate to start on a provisional basis while checks are conducted in parallel.</div>
-            </button>
-          </div>
-        </div>
-
-        <div class="debrief-panel" id="debrief-1">
-          <div class="debrief-header"><span class="debrief-icon"></span><span id="debrief-1-title"></span></div>
-          <div class="debrief-body"><span id="debrief-1-text"></span><div class="debrief-lesson" id="debrief-1-lesson"></div></div>
-        </div>
-        <div class="continue-row">
-          <button class="continue-btn" id="cont-1" disabled onclick="goNext(1)">Continue to Scene 2 →</button>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════
-           SCENE 2 — RED FLAGS EMERGE
-      ══════════════════════════════════════════ -->
-      <div class="scene-panel" id="scene-2">
-        <div class="scene-header">
-          <div class="scene-icon-wrap">🚩</div>
-          <div class="scene-meta">
-            <div class="scene-badge">Scene 2 of 5</div>
-            <div class="scene-title">Red Flags Emerge</div>
-            <div class="scene-subtitle">Verification returns deeply troubling results</div>
-          </div>
-          <div class="scene-pts-badge">
-            <div class="scene-pts-label">Scene Score</div>
-            <div class="scene-pts-val" id="s2-score">—</div>
-          </div>
-        </div>
-
-        <div class="alert-bar danger">
-          <div class="alert-icon">🚨</div>
-          <div><strong>Verification Failure Alert</strong>Degree unverified. Employment history unconfirmed. Reference contact anomalies detected.</div>
-        </div>
-
-        <div class="email-pane">
-          <div class="email-thread-label">📬 Email Thread</div>
-
-          <div class="email-card urgent">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:var(--systra-red)">VT</div>
-              <div>
-                <div class="email-from">Verification &amp; Compliance Team — SYSTRA</div>
-                <div class="email-preview">🚨 URGENT: Verification failures on all counts — Mr. X</div>
-              </div>
-              <div class="email-time">11:22</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body open">
-              <p>Team,</p>
-              <p>We have contacted the National Engineering College. <strong>There is no record of Mr. X in their Civil Engineering course for the years claimed (2007–2011).</strong></p>
-              <p>AB Group HR has confirmed <strong>he was never on their payroll.</strong> Both reference telephone numbers connect to answer machines that are unregistered to any known business.</p>
-              <p>This requires immediate escalation. Do not proceed with engagement.</p>
-              <div class="email-sig">Verification &amp; Compliance Team &nbsp;·&nbsp; SYSTRA</div>
-            </div>
-          </div>
-
-          <div class="email-card unread">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:var(--systra-teal)">SC</div>
-              <div>
-                <div class="email-from">Sarah Chen — Project Director, SYSTRA</div>
-                <div class="email-preview">RE: Mr. X — Can we give him a chance to explain?</div>
-              </div>
-              <div class="email-time">11:45</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body">
-              <p>I understand the verification concerns are serious.</p>
-              <p>However, the Project Director has met Mr. X and is impressed. <em>"Could this be a database error at the university? Perhaps we should give him 48 hours to bring original documents?"</em></p>
-              <p>The penalty clock is still running. I need your guidance — what's our move?</p>
-              <div class="email-sig">Sarah Chen &nbsp;|&nbsp; Project Director &nbsp;·&nbsp; SYSTRA</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="context-box">
-          <div class="ctx-label">📋 Your Situation</div>
-          Verification has failed on all three counts: degree, employment history, and references. The Project Director still wants Mr. X to start. The commercial pressure remains intense. What do you do?
-        </div>
-
-        <div class="question-zone">
-          <div class="question-text">❓ What do you do?</div>
-          <div class="options-grid" id="opts-2">
-            <button class="option-btn" onclick="choose(2,'A','risky')" id="s2-A">
-              <div class="option-letter">A</div>
-              <div class="option-text">Confront Mr. X directly with the findings before escalating internally.</div>
-            </button>
-            <button class="option-btn" onclick="choose(2,'B','correct')" id="s2-B">
-              <div class="option-letter">B</div>
-              <div class="option-text">Immediately escalate to PMC Project Director and Legal + Ethics &amp; Compliance with a formal written report.</div>
-            </button>
-            <button class="option-btn" onclick="choose(2,'C','poor')" id="s2-C">
-              <div class="option-letter">C</div>
-              <div class="option-text">Give the candidate 48 hours to provide original certificates — this may be an administrative error.</div>
-            </button>
-          </div>
-        </div>
-
-        <div class="debrief-panel" id="debrief-2">
-          <div class="debrief-header"><span class="debrief-icon"></span><span id="debrief-2-title"></span></div>
-          <div class="debrief-body"><span id="debrief-2-text"></span><div class="debrief-lesson" id="debrief-2-lesson"></div></div>
-        </div>
-        <div class="continue-row">
-          <button class="continue-btn" id="cont-2" disabled onclick="goNext(2)">Continue to Scene 3 →</button>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════
-           SCENE 3 — HE'S ALREADY WORKING
-      ══════════════════════════════════════════ -->
-      <div class="scene-panel" id="scene-3">
-        <div class="scene-header">
-          <div class="scene-icon-wrap">⚠️</div>
-          <div class="scene-meta">
-            <div class="scene-badge">Scene 3 of 5</div>
-            <div class="scene-title">He's Already Working</div>
-            <div class="scene-subtitle">Unverified engineer has approved safety-critical structural designs</div>
-          </div>
-          <div class="scene-pts-badge">
-            <div class="scene-pts-label">Scene Score</div>
-            <div class="scene-pts-val" id="s3-score">—</div>
-          </div>
-        </div>
-
-        <div class="alert-bar danger">
-          <div class="alert-icon">🚨</div>
-          <div><strong>Critical Safety Alert</strong>Unverified engineer has approved structural designs on a live construction site. Works in progress. Safety risk unquantified.</div>
-        </div>
-
-        <div class="email-pane">
-          <div class="email-thread-label">📬 Email Thread</div>
-
-          <div class="email-card urgent">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:var(--systra-orange)">AP</div>
-              <div>
-                <div class="email-from">Amir Patel MEng — Senior Structural Engineer, SYSTRA</div>
-                <div class="email-preview">🚨 URGENT: Critical design errors — Section 4 tunnel columns</div>
-              </div>
-              <div class="email-time">14:07</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body open">
-              <p>Team — I need to raise a serious concern immediately.</p>
-              <p>Reviewing the tunnel column design pack signed off by Mr. X last week, I have identified <strong>fundamental errors in the load calculations. Column specifications are significantly undersized</strong> for the expected metro loads.</p>
-              <p>Construction has already commenced on Section 4. This is a public safety issue. I am formally flagging this now and requesting immediate action.</p>
-              <div class="email-sig">Amir Patel, MEng &nbsp;|&nbsp; Senior Structural Engineer &nbsp;·&nbsp; SYSTRA</div>
-            </div>
-          </div>
-
-          <div class="email-card unread">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:var(--systra-teal-mid)">JO</div>
-              <div>
-                <div class="email-from">James Okafor — HR Manager, SYSTRA</div>
-                <div class="email-preview">RE: Mr. X — onboarded 3 weeks ago by a different coordinator</div>
-              </div>
-              <div class="email-time">14:15</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body">
-              <p>I have just become aware that Mr. X was actually onboarded three weeks ago by a different HR coordinator while I was on annual leave.</p>
-              <p>He has been acting as Lead Structural Engineer since then. This was processed without the pending verification being flagged as a blocking item. I sincerely apologise — this should not have happened.</p>
-              <div class="email-sig">James Okafor &nbsp;|&nbsp; HR Manager &nbsp;·&nbsp; SYSTRA</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="context-box">
-          <div class="ctx-label">📋 Your Situation</div>
-          Mr. X has been acting as Lead Structural Engineer for three weeks and has reviewed metro tunnel column designs. A peer engineer has flagged fundamental errors — column load specs significantly undersized. Construction has already begun. What is your immediate response?
-        </div>
-
-        <div class="question-zone">
-          <div class="question-text">❓ What is your immediate response?</div>
-          <div class="options-grid" id="opts-3">
-            <button class="option-btn" onclick="choose(3,'A','correct')" id="s3-A">
-              <div class="option-letter">A</div>
-              <div class="option-text">Suspend Mr. X and issue a work stoppage on all affected sections pending an independent structural review.</div>
-            </button>
-            <button class="option-btn" onclick="choose(3,'B','poor')" id="s3-B">
-              <div class="option-letter">B</div>
-              <div class="option-text">Complete Mr. X's HR termination first, then review the designs once the process is finished.</div>
-            </button>
-            <button class="option-btn" onclick="choose(3,'C','risky')" id="s3-C">
-              <div class="option-letter">C</div>
-              <div class="option-text">Quietly ask a senior engineer to re-check the designs without raising a formal alarm to the client.</div>
-            </button>
-          </div>
-        </div>
-
-        <div class="debrief-panel" id="debrief-3">
-          <div class="debrief-header"><span class="debrief-icon"></span><span id="debrief-3-title"></span></div>
-          <div class="debrief-body"><span id="debrief-3-text"></span><div class="debrief-lesson" id="debrief-3-lesson"></div></div>
-        </div>
-        <div class="continue-row">
-          <button class="continue-btn" id="cont-3" disabled onclick="goNext(3)">Continue to Scene 4 →</button>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════
-           SCENE 4 — TELLING THE CLIENT
-      ══════════════════════════════════════════ -->
-      <div class="scene-panel" id="scene-4">
-        <div class="scene-header">
-          <div class="scene-icon-wrap">📢</div>
-          <div class="scene-meta">
-            <div class="scene-badge">Scene 4 of 5</div>
-            <div class="scene-title">Telling the Client</div>
-            <div class="scene-subtitle">The Metro Authority demands a full account</div>
-          </div>
-          <div class="scene-pts-badge">
-            <div class="scene-pts-label">Scene Score</div>
-            <div class="scene-pts-val" id="s4-score">—</div>
-          </div>
-        </div>
-
-        <div class="alert-bar warning">
-          <div class="alert-icon">📋</div>
-          <div><strong>Client Communication Required</strong>Works stopped. Independent structural review initiated. The Metro Authority has issued a formal request for explanation within 4 hours.</div>
-        </div>
-
-        <div class="email-pane">
-          <div class="email-thread-label">📬 Email Thread</div>
-
-          <div class="email-card urgent">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:#5a1010">DI</div>
-              <div>
-                <div class="email-from">Metro Authority — Director of Infrastructure</div>
-                <div class="email-preview">URGENT: Formal explanation required — Section 4 stoppage</div>
-              </div>
-              <div class="email-time">15:30</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body open">
-              <p>Dear SYSTRA,</p>
-              <p>We have been notified of a work stoppage on Section 4. We require a formal response addressing:</p>
-              <p><strong>1.</strong> What happened and why &nbsp; <strong>2.</strong> Who is responsible &nbsp; <strong>3.</strong> What the safety risk is &nbsp; <strong>4.</strong> What remediation SYSTRA is undertaking</p>
-              <p>This is a matter of serious public concern. We expect a full response within 4 hours.</p>
-              <div class="email-sig">Director of Infrastructure &nbsp;·&nbsp; Metro Authority</div>
-            </div>
-          </div>
-
-          <div class="email-card unread">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:var(--systra-teal)">SC</div>
-              <div>
-                <div class="email-from">Sarah Chen — Project Director, SYSTRA</div>
-                <div class="email-preview">RE: Client response — Legal is nervous, how much do we say?</div>
-              </div>
-              <div class="email-time">15:45</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body">
-              <p>Legal is nervous about full disclosure at this stage. One option: state that a "personnel matter" has been identified and resolved, and that works will resume shortly.</p>
-              <p>Alternatively, we could wait for the full independent review to complete before saying anything substantive — give the client the complete picture at once.</p>
-              <p>Your call. What do we tell them?</p>
-              <div class="email-sig">Sarah Chen &nbsp;|&nbsp; Project Director &nbsp;·&nbsp; SYSTRA</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="context-box">
-          <div class="ctx-label">📋 Your Situation</div>
-          Works are stopped. An independent structural review is underway. The Metro Authority demands to know what happened, who is responsible, what the safety risk is, and what SYSTRA is doing about it. The Project Director is nervous. How do you frame the client communication?
-        </div>
-
-        <div class="question-zone">
-          <div class="question-text">❓ How do you communicate with the client?</div>
-          <div class="options-grid" id="opts-4">
-            <button class="option-btn" onclick="choose(4,'A','correct')" id="s4-A">
-              <div class="option-letter">A</div>
-              <div class="option-text">Issue a full, transparent incident report — what happened, root cause, actions taken, and a remediation plan with timeline.</div>
-            </button>
-            <button class="option-btn" onclick="choose(4,'B','poor')" id="s4-B">
-              <div class="option-letter">B</div>
-              <div class="option-text">Brief summary stating a personnel issue has been resolved and works will resume shortly — keep it minimal.</div>
-            </button>
-            <button class="option-btn" onclick="choose(4,'C','risky')" id="s4-C">
-              <div class="option-letter">C</div>
-              <div class="option-text">Delay notification until the independent review is complete — give the client the full picture at once when ready.</div>
-            </button>
-          </div>
-        </div>
-
-        <div class="debrief-panel" id="debrief-4">
-          <div class="debrief-header"><span class="debrief-icon"></span><span id="debrief-4-title"></span></div>
-          <div class="debrief-body"><span id="debrief-4-text"></span><div class="debrief-lesson" id="debrief-4-lesson"></div></div>
-        </div>
-        <div class="continue-row">
-          <button class="continue-btn" id="cont-4" disabled onclick="goNext(4)">Continue to Scene 5 →</button>
-        </div>
-      </div>
-
-      <!-- ══════════════════════════════════════════
-           SCENE 5 — BUILDING SAFEGUARDS
-      ══════════════════════════════════════════ -->
-      <div class="scene-panel" id="scene-5">
-        <div class="scene-header">
-          <div class="scene-icon-wrap">🛡️</div>
-          <div class="scene-meta">
-            <div class="scene-badge">Scene 5 of 5</div>
-            <div class="scene-title">Building Safeguards</div>
-            <div class="scene-subtitle">Prevention: SYSTRA must now present a CV Fraud Protocol</div>
-          </div>
-          <div class="scene-pts-badge">
-            <div class="scene-pts-label">Scene Score</div>
-            <div class="scene-pts-val" id="s5-score">—</div>
-          </div>
-        </div>
-
-        <div class="alert-bar success">
-          <div class="alert-icon">✅</div>
-          <div><strong>Outcome</strong>Independent review confirmed non-compliant designs — but no physical damage occurred. Works were stopped in time. The focus now is on ensuring this never happens again.</div>
-        </div>
-
-        <div class="email-pane">
-          <div class="email-thread-label">📬 Email Thread</div>
-
-          <div class="email-card positive">
-            <div class="email-header" onclick="toggleEmail(this)">
-              <div class="email-avatar" style="background:var(--correct)">MA</div>
-              <div>
-                <div class="email-from">Metro Authority — Director of Infrastructure</div>
-                <div class="email-preview">RE: CV Fraud Prevention Protocol — formal request</div>
-              </div>
-              <div class="email-time">10:00</div>
-              <span class="email-toggle">▼</span>
-            </div>
-            <div class="email-body open">
-              <p>Dear SYSTRA,</p>
-              <p>We are relieved no physical harm resulted from this incident. However, as a condition of continuing our PMC engagement, we require SYSTRA to present and implement a comprehensive CV Fraud Prevention Protocol.</p>
-              <p>Please advise which approach you will implement across all future exposed-position recruitment.</p>
-              <div class="email-sig">Director of Infrastructure &nbsp;·&nbsp; Metro Authority</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="context-box">
-          <div class="ctx-label">📋 Your Situation</div>
-          The independent review confirms designs were non-compliant, but no physical damage occurred — works were stopped in time. The Metro Authority asks SYSTRA to present a CV Fraud Prevention Protocol. Which approach represents the strongest, most comprehensive safeguard?
-        </div>
-
-        <div class="question-zone">
-          <div class="question-text">❓ Which prevention protocol do you recommend?</div>
-          <div class="options-grid" id="opts-5">
-            <button class="option-btn" onclick="choose(5,'A','correct')" id="s5-A">
-              <div class="option-letter">A</div>
-              <div class="option-text">Mandatory third-party verification or reference checks for all exposed positions (as defined in SYSTRA's Ethics Rule, HR Operations Group) before any offer is made.</div>
-            </button>
-            <button class="option-btn" onclick="choose(5,'B','poor')" id="s5-B">
-              <div class="option-letter">B</div>
-              <div class="option-text">Require all candidates to sign a declaration that their CV is truthful — a strong deterrent with legal value if fraud is later proven.</div>
-            </button>
-            <button class="option-btn" onclick="choose(5,'C','risky')" id="s5-C">
-              <div class="option-letter">C</div>
-              <div class="option-text">Use LinkedIn and Google to verify employment history — faster and more cost-effective than formal third-party checks.</div>
-            </button>
-          </div>
-        </div>
-
-        <div class="debrief-panel" id="debrief-5">
-          <div class="debrief-header"><span class="debrief-icon"></span><span id="debrief-5-title"></span></div>
-          <div class="debrief-body"><span id="debrief-5-text"></span><div class="debrief-lesson" id="debrief-5-lesson"></div></div>
-        </div>
-        <div class="continue-row">
-          <button class="continue-btn" id="cont-5" disabled onclick="showResults()">📊 View My Results →</button>
-        </div>
-      </div>
-
-    </div><!-- /content-area -->
-  </div><!-- /main-layout -->
-</div><!-- /app -->
+<footer>
+  <div class="footer-inner">
+    <img id="footer-logo" src="Logo_SYSTRA.png" alt="SYSTRA">
+    <div class="footer-logo-text" id="footer-fallback">SYSTRA</div>
+    <div class="footer-text">PMC · Fraud Awareness Training · Confidential</div>
+  </div>
+</footer>
 
 <script>
-// ══════════════════════════════════════
-// STATE
-// ══════════════════════════════════════
-let soundOn = true;
-let score = 0, correct = 0, risky = 0, poor = 0;
-let currentScene = 0;
-let unlockedScenes = [0];
-
-const SCENES = {
-  1: {
-    A: { type:'poor',    title:'❌ Poor Choice',   text:'An unverified person is placed on a live, safety-critical project. Timeline pressure is the fraudster\'s primary weapon — they exploit urgency to bypass controls.',           lesson:'<strong>Key Lesson:</strong> Never let commercial pressure override safety verification. The cost of fraud is always higher than the cost of a brief delay.' },
-    B: { type:'correct', title:'✅ Best Choice',   text:'Fraud is caught before engagement. Verification for exposed positions is non-negotiable under SYSTRA\'s Ethics Rules, regardless of commercial pressure.',                     lesson:'<strong>Key Lesson:</strong> Structured background verification — degree, references, professional body — is your first and most powerful line of defence.' },
-    C: { type:'risky',   title:'⚠ Risky Choice',  text:'An unverified person is already making technical decisions. Stopping works mid-stream is far more costly — technically, commercially, and reputationally — than a brief delay.', lesson:'<strong>Key Lesson:</strong> Provisional engagement with parallel checks is a false economy. Verification must precede any form of engagement on exposed roles.' }
+// ── MODULE REGISTRY ──
+// This is the ONLY place you ever edit.
+// Add a new module by adding one object to this array.
+// The index page renders everything automatically.
+// Fields: file (required), title (required), desc, tags, time, color, status
+const MODULE_REGISTRY = [
+  {
+    file: "cv-fraud-elearning.html",
+    title: "CV Fraud Detection",
+    desc: "A candidate with a fabricated CV is recruited as Lead Structural Engineer on a live Metro project. Navigate five critical decisions under pressure.",
+    tags: ["5 Scenes", "~5 min", "HR · PMC"],
+    time: 5,
+    color: "#d22328",
+    status: "available"
   },
-  2: {
-    A: { type:'risky',   title:'⚠ Risky Choice',  text:'Direct confrontation compromises the investigation. The candidate gains time to prepare counter-narratives, destroy evidence, or brief referees.',                            lesson:'<strong>Key Lesson:</strong> Never confront a fraud suspect before escalating to Legal and Ethics & Compliance. Evidence protection comes first.' },
-    B: { type:'correct', title:'✅ Best Choice',   text:'Evidence is protected and the legal process is followed correctly. Ethics & Compliance and Legal can now lead with a full written record.',                                     lesson:'<strong>Key Lesson:</strong> Once verification fails, this becomes a legal and compliance matter — not an HR conversation. Escalate formally, in writing, immediately.' },
-    C: { type:'poor',    title:'❌ Poor Choice',   text:'Giving the candidate an opportunity to explain creates a window for evidence destruction — forged documents, fabricated confirmations, and coached witnesses.',               lesson:'<strong>Key Lesson:</strong> There is no innocent explanation for a degree that does not exist and employment that never happened. Delay is dangerous.' }
+  {
+    file: "managers-dilemma-teams.html",
+    title: "The Manager's Dilemma",
+    desc: "An escalating Teams conversation chain — client, project director, HR, compliance — all pushing you to bypass verification. How do you respond?",
+    tags: ["5 Chats", "~6 min", "Management"],
+    time: 6,
+    color: "#003e4a",
+    status: "available"
   },
-  3: {
-    A: { type:'correct', title:'✅ Best Choice',   text:'Safety protected, liability limited. Suspending works and initiating an independent review is the correct response. HR termination and technical safety must run in parallel.', lesson:'<strong>Key Lesson:</strong> When public safety is at risk, a work stoppage is not a disruption — it is the legally and ethically required response.' },
-    B: { type:'poor',    title:'❌ Poor Choice',   text:'Sequencing termination before the design review creates a dangerous gap. Construction continues on potentially unsafe structures while HR completes its process.',              lesson:'<strong>Key Lesson:</strong> HR termination and technical safety review must run in parallel, not in sequence. Safety always takes priority over administrative process.' },
-    C: { type:'risky',   title:'⚠ Risky Choice',  text:'Concealing a safety concern from the client violates SYSTRA\'s duty of care and contractual obligations as PMC. If harm results, liability is dramatically compounded.',      lesson:'<strong>Key Lesson:</strong> A safety event cannot be managed quietly. Transparency with the client — however uncomfortable — is both the ethical and legal requirement.' }
+  {
+    file: "unplanned-attack-immersive.html",
+    title: "The Unplanned Attack",
+    desc: "A hacktivist group threatens your organisation following a new rail system deployment. Unknown attack vector. Time is critical.",
+    tags: ["4 Scenes", "~2 min", "Cybersecurity"],
+    time: 2,
+    color: "#2eb2b2",
+    status: "available"
   },
-  4: {
-    A: { type:'correct', title:'✅ Best Choice',   text:'Trust maintained and legal protection secured. Full transparent disclosure — root cause, actions taken, and a clear remediation plan — is what the client and duty of care requires.', lesson:'<strong>Key Lesson:</strong> Transparency in a crisis builds long-term trust. Clients can forgive mistakes; they cannot forgive concealment.' },
-    B: { type:'poor',    title:'❌ Poor Choice',   text:'PMC obligation is breached. The client has an absolute right to full disclosure of any safety event affecting their project. A vague "personnel matter" will be read as evasion.',  lesson:'<strong>Key Lesson:</strong> As PMC, SYSTRA\'s role is to protect the client\'s interests — including protecting them from inadequate information about safety risks.' },
-    C: { type:'risky',   title:'⚠ Risky Choice',  text:'Complete silence while the review runs creates suspicion and damages trust. A brief holding communication acknowledging the issue and confirming actions underway is far better.',    lesson:'<strong>Key Lesson:</strong> "We are reviewing — here is what we know and what we are doing" is always better than silence. Holding communications buy time without breaking trust.' }
-  },
-  5: {
-    A: { type:'correct', title:'✅ Best Choice',   text:'Fraud is systematically prevented. Third-party verification removes internal bias, and formal institutional checks instantly catch false credentials that social media searches cannot.', lesson:'<strong>Key Lesson:</strong> SYSTRA\'s Ethics Rule mandates third-party verification for exposed positions. This is not optional — it is the standard that protects projects, people, and public safety.' },
-    B: { type:'poor',    title:'❌ Poor Choice',   text:'A declaration is a deterrent only, with no preventive value. Fraudsters will sign anything. Legal value exists only after fraud has been proven — when the harm is already done.',      lesson:'<strong>Key Lesson:</strong> Paper declarations prevent nothing. Prevention requires verification, not promises.' },
-    C: { type:'risky',   title:'⚠ Risky Choice',  text:'Social profiles are trivially fabricated. LinkedIn cannot replace formal institutional verification for safety-critical exposed positions. This approach would not have caught Mr. X.', lesson:'<strong>Key Lesson:</strong> For exposed positions, only formal institutional verification — university registrars, official HR records, professional body confirmation — meets the required standard.' }
+  {
+    file: "billing-fraud-inbox.html",
+    title: "The Anonymous Complaint",
+    desc: "An anonymous email lands in your inbox alleging that your site engineer has colluded with a contractor to certify inflated quantities worth $340k.",
+    tags: ["5 Emails", "~6 min", "Finance · PMC"],
+    time: 6,
+    color: "#5c7683",
+    status: "available"
   }
-};
+  // ── TO ADD A NEW MODULE ──
+  // Just copy-paste one of the blocks above and change the values.
+  // { file: "new-module.html", title: "Module Title", desc: "Description...",
+  //   tags: ["X Scenes", "~Y min", "Topic"], time: Y, color: "#hexcolor", status: "available" }
+];
 
-// ══════════════════════════════════════
-// AUDIO
-// ══════════════════════════════════════
-let audioCtx = null;
-function getCtx() { if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
-function tone(f, d, t='sine', v=0.28, delay=0) {
-  if (!soundOn) return;
-  try {
-    const ctx=getCtx(), o=ctx.createOscillator(), g=ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.type=t; o.frequency.setValueAtTime(f, ctx.currentTime+delay);
-    g.gain.setValueAtTime(v, ctx.currentTime+delay);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+delay+d);
-    o.start(ctx.currentTime+delay); o.stop(ctx.currentTime+delay+d+0.05);
-  } catch(e){}
-}
-function playCorrect() { tone(523,.12); tone(659,.12,'sine',.28,.13); tone(784,.28,'sine',.32,.27); }
-function playRisky()   { tone(440,.1,'triangle',.22); tone(370,.22,'triangle',.22,.12); }
-function playPoor()    { tone(220,.15,'sawtooth',.22); tone(185,.3,'sawtooth',.22,.17); }
-function playClick()   { tone(800,.05,'square',.1); }
-function playEmail()   { tone(600,.07); tone(720,.07,'sine',.14,.08); }
-function playFanfare() { [261,329,392,523].forEach((f,i)=>tone(f,.2,'sine',.26,i*.1)); }
-function toggleSound() {
-  soundOn=!soundOn;
-  document.getElementById('soundToggle').textContent = soundOn ? '🔊 Sound On' : '🔇 Sound Off';
-  if(soundOn) playClick();
-}
-
-// ══════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════
-function showPanel(id) {
-  document.querySelectorAll('.scene-panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('intro-screen').style.display = 'none';
-  document.getElementById('results-screen').style.display = 'none';
-  if (id===0) document.getElementById('intro-screen').style.display='flex';
-  else if (id==='results') document.getElementById('results-screen').style.display='flex';
-  else { const p=document.getElementById('scene-'+id); if(p) p.classList.add('active'); }
-  document.getElementById('contentArea').scrollTop=0;
-}
-
-function updateSidebar(s) {
-  document.querySelectorAll('.sidebar-item').forEach(el=>el.classList.remove('active'));
-  const el=document.getElementById('nav-'+s); if(el) el.classList.add('active');
-}
-
-function unlockNav(s) {
-  const el=document.getElementById('nav-'+s);
-  if(el) { el.classList.remove('locked'); unlockedScenes.push(s); }
-}
-
-function updateProgress(s) {
-  const pct = s==='results' ? 100 : (s/5)*100;
-  document.getElementById('progressFill').style.width = pct+'%';
-}
-
-function navTo(s) {
-  if(!unlockedScenes.includes(s) && s!==0) return;
-  playClick(); currentScene=s;
-  showPanel(s===0?0:s); updateSidebar(s); updateProgress(s);
-}
-
-function startModule() {
-  playFanfare();
-  currentScene=1; unlockNav(1);
-  showPanel(1); updateSidebar(1); updateProgress(1);
-}
-
-function goNext(scene) {
-  playClick();
-  const next=scene+1; unlockNav(next); currentScene=next;
-  showPanel(next); updateSidebar(next); updateProgress(next);
-}
-
-// ══════════════════════════════════════
-// GAME LOGIC
-// ══════════════════════════════════════
-function choose(scene, option, type) {
-  const data=SCENES[scene][option]; if(!data) return;
-
-  // disable all
-  document.getElementById('opts-'+scene).querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
-
-  // style chosen
-  const btn=document.getElementById('s'+scene+'-'+option);
-  btn.classList.add(type);
-  const badge=document.createElement('div');
-  badge.className='option-badge badge-'+type;
-  badge.textContent = type==='correct'?'✅ Best':type==='risky'?'⚠ Risky':'❌ Poor';
-  btn.appendChild(badge);
-
-  // score
-  const pts = type==='correct'?10:type==='risky'?4:0;
-  score+=pts;
-  if(type==='correct'){correct++;playCorrect();}
-  else if(type==='risky'){risky++;playRisky();}
-  else{poor++;playPoor();}
-
-  // debrief
-  const panel=document.getElementById('debrief-'+scene);
-  panel.className='debrief-panel show '+type;
-  panel.querySelector('.debrief-icon').textContent=type==='correct'?'✅':type==='risky'?'⚠️':'❌';
-  document.getElementById('debrief-'+scene+'-title').textContent=data.title;
-  document.getElementById('debrief-'+scene+'-text').textContent=data.text;
-  document.getElementById('debrief-'+scene+'-lesson').innerHTML=data.lesson;
-
-  // scene score
-  document.getElementById('s'+scene+'-score').textContent=pts+' / 10';
-
-  // sidebar score
-  document.getElementById('sideScore').textContent=score;
-
-  // mark completed
-  const nav=document.getElementById('nav-'+scene);
-  if(nav) nav.classList.add('completed');
-
-  // enable continue
-  document.getElementById('cont-'+scene).disabled=false;
-
-  // scroll to debrief
-  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),300);
-}
-
-function showResults() {
-  playFanfare(); currentScene='results';
-  showPanel('results'); updateSidebar('results'); updateProgress('results');
-  document.getElementById('finalScore').textContent=score;
-  document.getElementById('countCorrect').textContent=correct;
-  document.getElementById('countRisky').textContent=risky;
-  document.getElementById('countPoor').textContent=poor;
-  let title,sub;
-  if(score>=45){title='🏆 Outstanding — Fraud Champion';sub='Excellent. You consistently applied SYSTRA\'s verification standards under intense pressure. Your decisions protect projects, people, and public safety.';}
-  else if(score>=30){title='👍 Good — Solid Judgement';sub='Good awareness of fraud risks. Review the scenes where you scored lower — the key lessons will sharpen your decision-making in real situations.';}
-  else if(score>=15){title='⚠ Fair — Room to Improve';sub='You identified some risks but made decisions that could expose the project to fraud or safety failures. Replay the module and review the debrief notes carefully.';}
-  else{title='❌ Needs Development';sub='Several decisions would have led to serious project and safety consequences. Please review the module — understanding these principles is essential for your role.';}
-  document.getElementById('resultsTitle').textContent=title;
-  document.getElementById('resultsSub').textContent=sub;
-}
-
-function replayModule() {
-  score=0;correct=0;risky=0;poor=0;currentScene=0;unlockedScenes=[0];
-  document.getElementById('sideScore').textContent='0';
-  for(let s=1;s<=5;s++){
-    const opts=document.getElementById('opts-'+s);
-    if(opts){
-      opts.querySelectorAll('.option-btn').forEach(b=>{
-        b.disabled=false; b.className='option-btn';
-        const bg=b.querySelector('.option-badge'); if(bg) bg.remove();
-      });
+// ── LOGO: try to load local file, fall back to text ──
+function tryLoadLogo() {
+  const logos = document.querySelectorAll('#site-logo, #footer-logo');
+  const fallbacks = document.querySelectorAll('#logo-fallback, #footer-fallback');
+  logos.forEach(img => {
+    img.onload = () => {
+      img.style.display = 'block';
+      fallbacks.forEach(f => f.style.display = 'none');
+    };
+    img.onerror = () => {
+      img.style.display = 'none';
+    };
+    // Force re-check (img src already set in HTML)
+    if (img.complete && img.naturalWidth > 0) {
+      img.style.display = 'block';
+      fallbacks.forEach(f => f.style.display = 'none');
     }
-    const dp=document.getElementById('debrief-'+s); if(dp) dp.className='debrief-panel';
-    const ct=document.getElementById('cont-'+s); if(ct) ct.disabled=true;
-    const sc=document.getElementById('s'+s+'-score'); if(sc) sc.textContent='—';
-    const nv=document.getElementById('nav-'+s);
-    if(nv){nv.classList.remove('completed','active');nv.classList.add('locked');}
-  }
-  const n0=document.getElementById('nav-0');
-  if(n0){n0.classList.remove('locked');n0.classList.add('active');}
-  document.getElementById('progressFill').style.width='0%';
-  showPanel(0); playClick();
+  });
 }
 
-// ══════════════════════════════════════
-// EMAIL TOGGLE
-// ══════════════════════════════════════
-function toggleEmail(header) {
-  const body=header.nextElementSibling;
-  const toggle=header.querySelector('.email-toggle');
-  if(body&&body.classList.contains('email-body')){
-    const wasOpen=body.classList.contains('open');
-    body.classList.toggle('open');
-    if(toggle) toggle.classList.toggle('open',!wasOpen);
-    if(!wasOpen) playEmail();
+// ── RENDER MODULES ──
+function renderModules() {
+  const grid = document.getElementById('modules-grid');
+  const available = MODULE_REGISTRY.filter(m => m.status !== 'hidden');
+  const totalTime = available.reduce((s, m) => s + (m.time || 0), 0);
+
+  // Update stats
+  document.getElementById('stat-modules').textContent = available.length;
+  document.getElementById('stat-time').textContent = '~' + totalTime + 'm';
+  document.getElementById('module-count-badge').textContent = available.length + ' Modules';
+  document.getElementById('section-label').textContent = 'Training Modules — ' + available.length + ' Available';
+
+  if (!available.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">📚</div>
+      <div class="empty-title">No modules yet</div>
+      <div class="empty-sub">Modules will appear here automatically once they are added to the MODULE_REGISTRY in the index page.</div>
+    </div>`;
+    return;
   }
+
+  grid.innerHTML = '';
+  available.forEach((m, i) => {
+    const card = document.createElement('a');
+    card.className = 'mod-card';
+    card.href = m.file;
+    card.innerHTML = `
+      <div class="mod-card-stripe" style="background:${m.color}"></div>
+      <div class="mod-card-body">
+        <div class="mod-num">Module ${String(i + 1).padStart(2, '0')}</div>
+        <div class="mod-title">${m.title}</div>
+        <div class="mod-desc">${m.desc}</div>
+        <div class="mod-tags">${(m.tags || []).map(t => `<span class="mod-tag">${t}</span>`).join('')}</div>
+      </div>
+      <div class="mod-card-foot">
+        <div class="mod-status">${m.status === 'available' ? '✓ Available' : m.status === 'coming-soon' ? '⏳ Coming soon' : '🔒 Locked'}</div>
+        <div class="mod-arrow">→</div>
+      </div>`;
+    if (m.status !== 'available') {
+      card.style.opacity = '0.55';
+      card.style.pointerEvents = 'none';
+    }
+    grid.appendChild(card);
+  });
 }
 
-// INIT
-showPanel(0);
-updateSidebar(0);
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', () => {
+  tryLoadLogo();
+  renderModules();
+});
 </script>
 </body>
 </html>
