@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Billing Fraud — Anonymous Complaint</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+:root{
+  --blue:#1a56db;--blue-lt:#eff4ff;--red:#e02424;--red-lt:#fdf2f2;
+  --amber:#b45309;--amber-lt:#fffbeb;--green:#057a55;--green-lt:#f3faf7;
+  --text:#111928;--muted:#6b7280;--border:#e2e4e9;--surface:#fff;
+  --mono:'Share Tech Mono',monospace;--head:'Barlow Condensed',sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{background:#f0f2f5;font-family:var(--body);font-size:16px}
+
+/* ── INTRO ── */
+#intro{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:#f0f2f5}
+.intro-card{width:100%;max-width:600px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12)}
+.intro-top{background:linear-gradient(135deg,#1c1b20,#2d2b35);padding:clamp(24px,5vw,36px);color:#fff}
+.intro-badge{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.45);margin-bottom:10px;text-transform:uppercase}
+.intro-title{font-family:var(--head);font-size:clamp(28px,7vw,42px);font-weight:900;line-height:1.1;margin-bottom:8px}
+.intro-title em{color:#fbbf24;font-style:normal}
+.intro-sub{font-size:clamp(12px,3vw,14px);color:rgba(255,255,255,.7);line-height:1.5}
+.intro-body{padding:clamp(18px,4vw,28px)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.pill{background:#f3f4f6;border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted);font-weight:500}
+.intro-context{background:#fffbeb;border-left:4px solid #f59e0b;padding:14px 16px;border-radius:0 6px 6px 0;font-size:clamp(12px,3.5vw,14px);line-height:1.7;color:var(--text);margin-bottom:14px}
+.intro-context strong{color:#92400e}
+.intro-warn{background:#fdf2f2;border:1px solid #fca5a5;border-radius:6px;padding:10px 14px;font-size:12px;color:#b91c1c;margin-bottom:20px;line-height:1.55}
+.start-btn{width:100%;background:var(--blue);color:#fff;border:none;padding:14px;font-size:15px;font-weight:600;border-radius:8px;cursor:pointer;font-family:var(--body);touch-action:manipulation}
+
+/* ── APP ── */
+#app{display:none;flex-direction:column;height:100vh;height:100dvh;background:var(--surface)}
+
+/* Mobile top bar */
+.app-topbar{background:#1c1b20;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar-title{font-weight:700;font-size:14px;color:#fff;flex:1}
+.topbar-score{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.5)}
+.topbar-prog{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin-top:6px}
+.topbar-fill{height:100%;background:#6366f1;border-radius:2px;transition:width .5s}
+
+/* Email list view */
+#list-view{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.list-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fff;flex-shrink:0}
+.list-title{font-size:16px;font-weight:700;color:var(--text)}
+.list-badge{background:var(--blue);color:#fff;font-size:11px;font-weight:700;border-radius:10px;padding:1px 8px;font-family:var(--mono)}
+.email-items{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.email-row{padding:12px 16px;border-bottom:1px solid #f3f4f6;cursor:pointer;transition:background .12s;position:relative;display:flex;gap:10px;align-items:flex-start}
+.email-row:active{background:#f3f4f6}
+.email-row.locked{opacity:.4;pointer-events:none}
+.email-row.active{background:var(--blue-lt);border-left:3px solid var(--blue)}
+.er-ava{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.er-body{flex:1;min-width:0}
+.er-top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.er-from{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%}
+.er-time{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.er-subject{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er-subject.read{font-weight:400;color:var(--muted)}
+.er-preview{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px}
+.er-tags{display:flex;gap:4px;flex-wrap:wrap}
+.tag{font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.tag.urgent{background:#fef2f2;color:#dc2626}
+.tag.fraud{background:#fef3c7;color:#92400e}
+.tag.action{background:#eff6ff;color:#1d4ed8}
+.tag.new{background:#f0fdf4;color:#166534}
+.unread-indicator{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:5px}
+
+/* Email detail view */
+#detail-view{display:none;flex-direction:column;height:100%;overflow:hidden}
+.detail-topbar{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:#fff;flex-shrink:0}
+.back-btn{background:none;border:none;font-size:20px;cursor:pointer;padding:4px;color:var(--blue);line-height:1;touch-action:manipulation}
+.detail-title-wrap{flex:1;min-width:0}
+.detail-from{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.detail-role{font-size:11px;color:var(--muted)}
+.detail-ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.detail-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.ev-header-inner{padding:16px}
+.ev-subject{font-size:clamp(15px,4vw,18px);font-weight:700;color:var(--text);line-height:1.3;margin-bottom:10px}
+.ev-meta-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.ev-meta-name{font-size:13px;font-weight:600;color:var(--text)}
+.ev-meta-email{font-size:11px;color:var(--muted)}
+.ev-meta-date{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.ev-tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.ev-divider{height:1px;background:var(--border);margin:0 16px}
+.ev-body{padding:16px;font-size:clamp(13px,3.5vw,14px);line-height:1.8;color:var(--text)}
+.ev-body p{margin-bottom:12px}
+.ev-body strong{color:#111}
+.ev-body .highlight{background:#fef9c3;padding:1px 3px;border-radius:2px}
+.ev-body ul{margin:8px 0 12px 20px}
+.ev-body ul li{margin-bottom:6px;line-height:1.6}
+.ev-attachment{display:flex;align-items:center;gap:10px;background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:12px 0;cursor:pointer}
+.att-icon{font-size:24px}
+.att-name{font-size:13px;font-weight:600;color:var(--blue)}
+.att-meta{font-size:11px;color:var(--muted)}
+.redacted-doc{background:#1c1b20;border-radius:8px;padding:14px 16px;margin:12px 0;font-family:var(--mono);font-size:11px;color:#a3e635;line-height:1.9;overflow-x:auto}
+.doc-header{color:#fbbf24;font-weight:700;margin-bottom:8px;font-size:12px}
+.r-line{display:flex;gap:8px;flex-wrap:wrap}
+.r-label{color:#6b7280;min-width:140px}
+.r-val{color:#fff}
+.r-val.flag{color:#ef4444;font-weight:700}
+.r-val.ok{color:#4ade80}
+
+/* Decision panel — fixed at bottom */
+.decision-panel{border-top:1px solid var(--border);background:#fafafa;padding:12px 16px;flex-shrink:0;max-height:55vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.dec-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-family:var(--mono)}
+.dec-label span{background:var(--blue);color:#fff;border-radius:10px;padding:1px 8px;font-size:10px;letter-spacing:0;margin-left:6px}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choice-btn{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;font-size:13px;font-family:var(--body);color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:10px;line-height:1.45;touch-action:manipulation;width:100%}
+.choice-btn:active{background:#f0f2f5}
+.choice-key{font-weight:700;color:var(--blue);font-family:var(--mono);font-size:10px;background:#eff4ff;padding:2px 6px;border-radius:3px;flex-shrink:0;margin-top:1px;letter-spacing:1px}
+.feedback{display:none;margin-top:10px;padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.6}
+.feedback.good{background:var(--green-lt);border-left:3px solid var(--green);color:#064e3b}
+.feedback.warn{background:var(--amber-lt);border-left:3px solid #f59e0b;color:#78350f}
+.feedback.bad{background:var(--red-lt);border-left:3px solid var(--red);color:#7f1d1d}
+.fb-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;opacity:.6;margin-bottom:4px}
+.next-btn{display:none;margin-top:10px;width:100%;background:var(--blue);color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--body);touch-action:manipulation}
+
+/* Results overlay */
+#results{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;justify-content:center;padding:0}
+#results.show{display:flex}
+.res-card{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom)}
+.res-top{padding:24px 24px 16px;color:#fff}
+.res-title{font-family:var(--head);font-size:28px;font-weight:900;margin-bottom:4px}
+.res-sub{font-size:12px;opacity:.7;font-family:var(--mono);letter-spacing:1px}
+.res-body{padding:20px 24px}
+.score-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.score-big{font-family:var(--head);font-size:52px;font-weight:900;line-height:1}
+.bar-wrap{flex:1;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-bottom:5px}
+.bar-fill{height:100%;border-radius:3px;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
+.verdict{font-size:13px;color:#374151;line-height:1.6;margin-bottom:16px}
+.learnings-box{background:#f9fafb;border-radius:8px;padding:14px 16px;margin-bottom:16px}
+.learnings-box h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#374151;margin-bottom:10px;font-family:var(--mono)}
+.learnings-box li{font-size:13px;color:#111928;line-height:1.55;margin-bottom:7px;padding-left:16px;position:relative;list-style:none}
+.learnings-box li::before{content:'→';position:absolute;left:0;color:var(--blue);font-weight:700}
+.res-btns{display:flex;gap:10px}
+.btn-primary{flex:1;background:var(--blue);color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--body);touch-action:manipulation}
+.btn-sec{background:transparent;color:var(--muted);border:1.5px solid var(--border);padding:12px 18px;border-radius:8px;font-size:14px;cursor:pointer;font-family:var(--body);touch-action:manipulation}
+
+/* Tablet / desktop enhancements */
+@media(min-width:700px){
+  #app{flex-direction:row}
+  .app-topbar{display:none}
+  #list-view{width:280px;border-right:1px solid var(--border);flex-shrink:0}
+  #detail-view{flex:1;display:flex!important}
+  .detail-topbar{display:none}
+  .back-btn{display:none}
+  #results{align-items:center;padding:20px}
+  .res-card{border-radius:12px;max-height:85vh}
+  .email-items{overflow-y:auto}
+  /* Welcome pane on desktop */
+  #welcome-pane{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--muted)}
+  .welcome-icon{font-size:44px}
+  .welcome-title{font-size:16px;font-weight:600;color:#374151}
+  .welcome-sub{font-size:13px;text-align:center;max-width:220px;line-height:1.5}
+}
+@media(min-width:960px){
+  #list-view{width:300px}
+}
+</style>
+
+<!-- Firebase Tracking -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getDatabase, ref, push, set, onValue } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBfOLbrbp4Sf9nXYuWn3Fv5k0CcqMPX1NI",
+  authDomain: "systra-fraud-training.firebaseapp.com",
+  databaseURL: "https://systra-fraud-training-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "systra-fraud-training",
+  storageBucket: "systra-fraud-training.firebasestorage.app",
+  messagingSenderId: "231886638179",
+  appId: "1:231886638179:web:f7f7abed053575519afc56"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+// Generate anonymous session ID
+const SESSION_ID = 'sess_' + Math.random().toString(36).substr(2,9) + '_' + Date.now();
+const MODULE_NAME = document.title.replace(/ —.*/, '').trim();
+const startTime = Date.now();
+
+window._fbTrack = function(eventType, data) {
+  try {
+    const payload = {
+      session_id: SESSION_ID,
+      module: MODULE_NAME,
+      event: eventType,
+      timestamp: new Date().toISOString(),
+      ...data
+    };
+    push(ref(db, 'responses'), payload);
+  } catch(e) { console.warn('Tracking unavailable', e); }
+};
+
+window._fbComplete = function(score, total) {
+  const elapsed = Math.round((Date.now() - startTime) / 1000);
+  window._fbTrack('module_complete', {
+    score, total,
+    pct: Math.round(score/total*100),
+    duration_seconds: elapsed
+  });
+};
+
+window._fbStart = function() {
+  window._fbTrack('module_start', { user_agent: navigator.userAgent.substring(0,80) });
+};
+</script>
+</head>
+<body>
+
+<div id="intro">
+  <div class="intro-card">
+    <div class="intro-top">
+      <div class="intro-badge">SYSTRA PMC · Module 4 · Billing Fraud</div>
+      <div class="intro-title">The Anonymous<br><em>Complaint</em></div>
+      <div class="intro-sub">Billing Fraud & Quantity Certification — Email Inbox Simulation</div>
+    </div>
+    <div class="intro-body">
+      <div class="pills">
+        <div class="pill">⏱ ~6 min</div><div class="pill">📧 Email Sim</div>
+        <div class="pill">5 Decisions</div><div class="pill">PMC · Finance</div>
+      </div>
+      <div class="intro-context">
+        <strong>The situation:</strong> You are the PMC Project Manager on a road construction project. This morning an <strong>anonymous email</strong> arrives alleging that your site engineer has been colluding with the contractor, certifying inflated quantities for earthwork, asphalt, and drainage — totalling over <strong>$340,000</strong> in overpayments.<br><br>
+        More emails arrive from the contractor, your engineer, the client, and compliance. <strong>Every email demands a decision.</strong>
+      </div>
+      <div class="intro-warn">⚠ Emails contain realistic financial data. Your goal: recognise the fraud signals and make the right call each time.</div>
+      <button class="start-btn" id="start-btn">📬 Open Inbox →</button>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <!-- Mobile top bar (hidden on desktop) -->
+  <div class="app-topbar">
+    <div style="flex:1">
+      <div class="topbar-title">📬 PMC Inbox</div>
+      <div class="topbar-prog"><div class="topbar-fill" id="topbar-fill" style="width:0%"></div></div>
+    </div>
+    <div class="topbar-score" id="topbar-score">0/5</div>
+  </div>
+
+  <!-- Email list -->
+  <div id="list-view">
+    <div class="list-header">
+      <div class="list-title">Inbox</div>
+      <div class="list-badge" id="inbox-badge">5</div>
+    </div>
+    <div class="email-items" id="email-items"></div>
+  </div>
+
+  <!-- Email detail -->
+  <div id="detail-view" style="flex-direction:column;overflow:hidden">
+    <!-- Mobile back bar -->
+    <div class="detail-topbar">
+      <button class="back-btn" id="back-btn">‹</button>
+      <div class="detail-title-wrap">
+        <div class="detail-from" id="dtl-from">—</div>
+        <div class="detail-role" id="dtl-role">Select an email</div>
+      </div>
+      <div class="detail-ava" id="dtl-ava" style="background:#6b7280">?</div>
+    </div>
+
+    <!-- Welcome (desktop only) -->
+    <div id="welcome-pane">
+      <div class="welcome-icon">📬</div>
+      <div class="welcome-title">Select an email</div>
+      <div class="welcome-sub">Start with the anonymous complaint at the top.</div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="detail-scroll" id="detail-scroll" style="display:none;flex:1;overflow-y:auto">
+      <div class="ev-header-inner">
+        <div class="ev-subject" id="ev-subject"></div>
+        <div class="ev-meta-row">
+          <div class="ev-meta-name" id="ev-from-name"></div>
+          <div class="ev-meta-email" id="ev-from-email"></div>
+        </div>
+        <div class="ev-meta-date" id="ev-date"></div>
+        <div class="ev-tag-row" id="ev-tags"></div>
+      </div>
+      <div class="ev-divider"></div>
+      <div class="ev-body" id="ev-body"></div>
+    </div>
+
+    <!-- Decision panel -->
+    <div class="decision-panel" id="decision-panel" style="display:none">
+      <div class="dec-label">Your action <span id="dec-counter">1/5</span></div>
+      <div class="choices" id="choices-wrap"></div>
+      <div class="feedback" id="feedback"><div class="fb-label" id="fb-label"></div><div id="fb-text"></div></div>
+      <button class="next-btn" id="next-btn">Next email →</button>
+    </div>
+  </div>
+</div>
+
+<div id="results">
+  <div class="res-card">
+    <div class="res-top" id="res-top"><div class="res-title">Investigation Complete</div><div class="res-sub">SYSTRA PMC · Billing Fraud · Module 4</div></div>
+    <div class="res-body">
+      <div class="score-row">
+        <div class="score-big" id="res-big">0/5</div>
+        <div style="flex:1"><div class="bar-wrap"><div class="bar-fill" id="res-bar"></div></div><div style="font-size:12px;color:#6b7280;font-family:'Share Tech Mono',monospace" id="res-pct"></div></div>
+      </div>
+      <div class="verdict" id="res-verdict"></div>
+      <div class="learnings-box"><h3>Key Learnings</h3><ul id="res-ul"></ul></div>
+      <div class="res-btns">
+        <button class="btn-primary" id="btn-restart">↺ Restart</button>
+        <button class="btn-sec" id="btn-close">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const isMobile = () => window.innerWidth < 700;
+
+const emails = [
+  { id:0, from:"anonymous@protonmail.com", fromName:"Anonymous Whistleblower", avatar:"?", color:"#6366f1",
+    subject:"URGENT: Fraud in quantity certification — Road Project", time:"07:14", date:"Today, 07:14",
+    tags:[{l:"FRAUD ALERT",c:"fraud"},{l:"URGENT",c:"urgent"}],
+    body:`<p>I am writing anonymously because I fear retaliation. I have witnessed serious irregularities in the quantity certification process on the Road Construction Project.</p>
+    <p>Your site engineer, <strong>Mr. Tariq Hussain</strong>, has been certifying contractor bills significantly above actual work completed:</p>
+    <ul>
+      <li>Earthwork claimed: <strong class="highlight">45,000 m³</strong> — actual: approx. <strong class="highlight">28,000 m³</strong></li>
+      <li>Asphalt laying claimed: <strong class="highlight">12.4 km</strong> — actual: approx. <strong class="highlight">7.8 km</strong></li>
+      <li>Drainage works claimed: <strong class="highlight">890 units</strong> — actual: approx. <strong class="highlight">510 units</strong></li>
+    </ul>
+    <p>Three monthly bills have already been certified and paid. Total overpayment may exceed <strong>$340,000</strong>. Hussain appears to have a close personal relationship with the contractor's site manager. The client is unaware.<br><em>— A concerned colleague</em></p>`,
+    choices:[
+      {key:"A",text:"Forward to Tariq Hussain directly and ask him to respond to the allegations.",quality:"bad",label:"SERIOUS MISSTEP",
+       feedback:"❌ Alerting the subject of an investigation before evidence is secured is a critical error. Tariq could destroy records or intimidate the whistleblower. Anonymous complaints of this seriousness must go to Compliance immediately — never to the alleged perpetrator."},
+      {key:"B",text:"Escalate immediately to the PMC Compliance Officer and freeze certification of the current month's bill pending investigation.",quality:"good",label:"BEST RESPONSE",
+       feedback:"✅ Correct on both counts. Escalating to Compliance protects the investigation's integrity. Freezing the current bill prevents further financial damage while claims are verified. Both actions must happen simultaneously and urgently."},
+      {key:"C",text:"Reply asking for more evidence before taking any action.",quality:"warn",label:"DELAYS CRITICAL ACTION",
+       feedback:"⚠️ Requesting more evidence before acting delays a time-sensitive investigation. The quantities alleged are specific enough to begin immediate independent verification. Act first — gather more evidence during the investigation."}
+    ]
+  },
+  { id:1, from:"contractor@alqudsiroads.com", fromName:"Ahmed Al-Qudsi — Al-Qudsi Roads LLC", avatar:"AQ", color:"#d97706",
+    subject:"Monthly Bill #4 — Certification Request (Due Friday)", time:"08:47", date:"Today, 08:47",
+    tags:[{l:"ACTION REQUIRED",c:"action"},{l:"BILLING",c:"fraud"}],
+    body:`<p>Dear Project Manager,</p>
+    <p>Please find attached Monthly Bill #4. We request sign-off by <strong>this Friday</strong> to avoid cash flow disruption on site.</p>
+    <div class="ev-attachment"><div class="att-icon">📊</div><div><div class="att-name">Monthly_Bill_04_AlQudsi_Roads.xlsx</div><div class="att-meta">$187,400 claimed · Awaiting PMC certification</div></div></div>
+    <div class="redacted-doc">
+      <div class="doc-header">BILL #4 — EXTRACTED DATA</div>
+      <div class="r-line"><span class="r-label">Earthwork claimed:</span><span class="r-val flag">11,200 m³</span></div>
+      <div class="r-line"><span class="r-label">Asphalt claimed:</span><span class="r-val flag">3.1 km</span></div>
+      <div class="r-line"><span class="r-label">Drainage claimed:</span><span class="r-val flag">220 units</span></div>
+      <div class="r-line"><span class="r-label">Certifying engineer:</span><span class="r-val flag">T. Hussain (under investigation)</span></div>
+      <div class="r-line"><span class="r-label">Total claimed:</span><span class="r-val flag">$187,400</span></div>
+    </div>
+    <p>Mr. Hussain has pre-reviewed and verbally confirmed the quantities. We look forward to your swift certification.</p>`,
+    choices:[
+      {key:"A",text:"Certify Bill #4 as normal — halting payments could breach the contract.",quality:"bad",label:"COMPOUNDING THE FRAUD",
+       feedback:"❌ Certifying a bill while the certifying engineer is under active fraud investigation is indefensible. The contract breach argument is a pressure tactic. A formal suspension of certification is a legitimate contractual step — paying this bill compounds the financial damage."},
+      {key:"B",text:"Issue a formal written suspension of Bill #4 certification, citing the ongoing investigation, and notify the client.",quality:"good",label:"BEST RESPONSE",
+       feedback:"✅ A written suspension creates a clear audit trail and prevents further losses. Notifying the client simultaneously is essential — they are the financially harmed party and have a right to know their PMC has identified a problem and is acting."},
+      {key:"C",text:"Ask a different engineer to re-measure and certify the bill if numbers stack up.",quality:"warn",label:"PREMATURE",
+       feedback:"⚠️ Independent re-measurement is the right step eventually — but certifying Bill #4 before Bills #1–3 are audited risks implicitly validating the fraud pattern. Suspend first, audit all bills together."}
+    ]
+  },
+  { id:2, from:"tariq.hussain@systra-pmc.com", fromName:"Tariq Hussain — Site Engineer, SYSTRA PMC", avatar:"TH", color:"#dc2626",
+    subject:"RE: My certification records — I need to explain", time:"11:22", date:"Today, 11:22",
+    tags:[{l:"INTERNAL",c:"action"},{l:"SENSITIVE",c:"urgent"}],
+    body:`<p>Dear Project Manager,</p>
+    <p>I understand there is an inquiry into my certifications. I want to be transparent before this goes further.</p>
+    <p>The quantities I certified were based on the <strong>contractor's daily reports</strong> and my own site observations. I acknowledge I may not have always conducted independent physical measurements — the volumes made this logistically difficult.</p>
+    <p>My relationship with the contractor's site manager is professional familiarity from previous projects — not improper collusion.</p>
+    <div class="ev-attachment"><div class="att-icon">📓</div><div><div class="att-name">Hussain_Field_Notes_Jan_Mar.pdf</div><div class="att-meta">47 pages · Handwritten notes · Self-submitted</div></div></div>
+    <p>I request that you allow me to continue working while this is reviewed. Removing me from site will raise questions with the contractor and delay the project further.</p>`,
+    choices:[
+      {key:"A",text:"Accept Tariq's explanation — relying on contractor reports is common practice and he has submitted his notes.",quality:"bad",label:"ACCEPTING INSUFFICIENT EVIDENCE",
+       feedback:"❌ Relying on contractor-provided daily reports without independent physical measurement is the definition of inadequate PMC oversight. Field notes prepared by the accused are not independent evidence. 60%+ inflation on earthwork cannot be explained by methodology alone."},
+      {key:"B",text:"Formally suspend Tariq from certification duties, preserve all his records, and appoint an independent QS to audit Bills 1–3.",quality:"good",label:"BEST RESPONSE",
+       feedback:"✅ Correct sequence: suspend from duties, preserve all records immediately (before anything can be altered), appoint independent QS. Tariq's request to remain on site during investigation is inappropriate and should be declined."},
+      {key:"C",text:"Allow Tariq to remain on site but require a second engineer to co-sign all future certifications.",quality:"warn",label:"INSUFFICIENT SAFEGUARD",
+       feedback:"⚠️ Keeping Tariq on site gives him continued access to evidence and the contractor. A co-signing requirement does not remove the conflict of interest. He must be suspended from project duties pending investigation."}
+    ]
+  },
+  { id:3, from:"client@roadauthority.gov", fromName:"Director General — National Roads Authority", avatar:"NR", color:"#0369a1",
+    subject:"FORMAL NOTICE: PMC oversight concerns — Immediate response required", time:"14:05", date:"Today, 14:05",
+    tags:[{l:"CLIENT",c:"action"},{l:"FORMAL NOTICE",c:"urgent"}],
+    body:`<p>Dear SYSTRA PMC Project Manager,</p>
+    <p>Our internal audit indicates quantity certifications on Bills #1–3 contain significant discrepancies versus actual works. Preliminary review suggests a potential overpayment of <strong>$280,000–$360,000</strong>.</p>
+    <p>As PMC, SYSTRA bears contractual responsibility for certification accuracy. We require by <strong>close of business tomorrow</strong>:</p>
+    <ul>
+      <li>Full written explanation of SYSTRA's certification process and oversight controls</li>
+      <li>Confirmation of whether SYSTRA has identified any internal conduct issues</li>
+      <li>A remediation plan and timeline for financial recovery</li>
+      <li>Immediate suspension of further payments to the contractor pending audit</li>
+    </ul>
+    <p>Failure to respond adequately will result in formal escalation to our legal team and possible termination of the PMC contract.</p>`,
+    choices:[
+      {key:"A",text:"Respond defensively — explain the certifications were conducted by a qualified engineer and SYSTRA's process was followed.",quality:"bad",label:"DEFENSIVE — WRONG APPROACH",
+       feedback:"❌ A defensive response implying process was followed correctly — when it demonstrably was not — destroys credibility. The client already has evidence. Deflecting at this stage will be seen as a cover-up and triggers legal escalation."},
+      {key:"B",text:"Respond transparently: confirm SYSTRA identified the issue independently, outline actions already taken, and commit to a full remediation report within 48 hours.",quality:"good",label:"BEST RESPONSE",
+       feedback:"✅ Transparency and demonstrated action are the only credible responses. Showing SYSTRA identified and acted on the issue — even hours before the client's formal notice — significantly strengthens SYSTRA's position and demonstrates PMC competence."},
+      {key:"C",text:"Request a 5-day extension to prepare a thorough response.",quality:"warn",label:"DELAYS DAMAGE CONTROL",
+       feedback:"⚠️ Requesting an extension without first acknowledging the issue signals inaction. A same-day acknowledgement confirming actions already underway, followed by a full report within 48 hours, is far stronger than requesting more time."}
+    ]
+  },
+  { id:4, from:"compliance@systra-global.com", fromName:"SYSTRA Global Compliance", avatar:"GC", color:"#059669",
+    subject:"Investigation closed — Prevention Protocol decision required", time:"16:40", date:"Today, 16:40",
+    tags:[{l:"RESOLVED",c:"new"},{l:"ACTION REQUIRED",c:"action"}],
+    body:`<p>The independent QS has completed the audit of Bills #1–3:</p>
+    <div class="redacted-doc">
+      <div class="doc-header">AUDIT FINDINGS — BILLS 1–3</div>
+      <div class="r-line"><span class="r-label">Earthwork certified:</span><span class="r-val flag">45,000 m³ ($198,000)</span></div>
+      <div class="r-line"><span class="r-label">Earthwork actual:</span><span class="r-val ok">27,400 m³ ($120,560)</span></div>
+      <div class="r-line"><span class="r-label">Asphalt certified:</span><span class="r-val flag">12.4 km ($186,000)</span></div>
+      <div class="r-line"><span class="r-label">Asphalt actual:</span><span class="r-val ok">7.6 km ($114,000)</span></div>
+      <div class="r-line"><span class="r-label">Drainage certified:</span><span class="r-val flag">890 units ($89,000)</span></div>
+      <div class="r-line"><span class="r-label">Drainage actual:</span><span class="r-val ok">498 units ($49,800)</span></div>
+      <div class="r-line"><span class="r-label">TOTAL OVERPAYMENT:</span><span class="r-val flag">$188,640 confirmed</span></div>
+      <div class="r-line"><span class="r-label">Collusion evidence:</span><span class="r-val flag">Cash payments to T. Hussain confirmed</span></div>
+    </div>
+    <p>Tariq Hussain has been terminated and referred to authorities. Contractor issued recovery notice for $188,640. Your recommendation on the <strong>prevention protocol</strong> is required:</p>`,
+    choices:[
+      {key:"A",text:"Mandatory independent third-party QS verification for all bills above $50,000, random spot checks on smaller bills, and engineer rotation every 6 months.",quality:"good",label:"BEST RESPONSE",
+       feedback:"✅ Gold standard for billing fraud prevention. Third-party verification removes the single point of failure. Random spot checks prevent fraud migration to below-threshold claims. Engineer rotation prevents the long-term personal relationships that enabled this collusion. All three elements are essential together."},
+      {key:"B",text:"Require the certifying engineer to submit a signed fraud declaration with every bill.",quality:"bad",label:"INEFFECTIVE CONTROL",
+       feedback:"❌ A signed declaration provides no independent verification and no deterrent to someone already engaged in fraud. Tariq Hussain would have signed without hesitation. Declarations have legal value after fraud is proven — they cannot prevent it."},
+      {key:"C",text:"Install CCTV on site and require the contractor to submit photo evidence of completed works with every bill.",quality:"warn",label:"USEFUL BUT INSUFFICIENT",
+       feedback:"⚠️ Photo evidence and surveillance are useful supplementary controls but can be staged. They do not replace independent physical measurement by a qualified surveyor. Add these as additional layers on top of mandatory independent verification — not as the primary control."}
+    ]
+  }
+];
+
+let current = -1, score = 0;
+const done = {};
+
+function buildList() {
+  const wrap = document.getElementById('email-items');
+  wrap.innerHTML = '';
+  emails.forEach((e, i) => {
+    const isLocked = i > 0 && !done[i-1];
+    const isAnswered = !!done[i];
+    const div = document.createElement('div');
+    div.className = 'email-row' + (isLocked?' locked':'') + (i===current?' active':'');
+    div.id = 'erow-'+i;
+    div.innerHTML = `
+      <div class="er-ava" style="background:${e.color}">${e.avatar}</div>
+      <div class="er-body">
+        <div class="er-top-row">
+          <div class="er-from">${e.fromName.split('—')[0].trim()}</div>
+          <div class="er-time">${e.time}</div>
+        </div>
+        <div class="er-subject${isAnswered?' read':''}">${e.subject}</div>
+        <div class="er-preview">${e.body.replace(/<[^>]+>/g,'').substring(0,55)}...</div>
+        <div class="er-tags">${e.tags.map(t=>`<span class="tag ${t.c}">${t.l}</span>`).join('')}</div>
+      </div>
+      ${!isAnswered&&!isLocked?'<div class="unread-indicator"></div>':''}`;
+    div.addEventListener('click', () => { if (!isLocked) openEmail(i); });
+    wrap.appendChild(div);
+  });
+  const remaining = emails.length - Object.keys(done).length;
+  document.getElementById('inbox-badge').textContent = remaining;
+}
+
+function openEmail(idx) {
+  current = idx;
+  const e = emails[idx];
+
+  // Mobile: show detail, hide list
+  if (isMobile()) {
+    document.getElementById('list-view').style.display = 'none';
+    document.getElementById('detail-view').style.display = 'flex';
+  }
+
+  // Update mobile topbar
+  document.getElementById('dtl-from').textContent = e.fromName.split('—')[0].trim();
+  document.getElementById('dtl-role').textContent = e.from;
+  document.getElementById('dtl-ava').textContent = e.avatar;
+  document.getElementById('dtl-ava').style.background = e.color;
+
+  // Subject + meta
+  document.getElementById('ev-subject').textContent = e.subject;
+  document.getElementById('ev-from-name').textContent = e.fromName;
+  document.getElementById('ev-from-email').textContent = e.from;
+  document.getElementById('ev-date').textContent = e.date;
+  document.getElementById('ev-tags').innerHTML = e.tags.map(t=>`<span class="tag ${t.c}">${t.l}</span>`).join('');
+  document.getElementById('ev-body').innerHTML = e.body;
+
+  document.getElementById('welcome-pane').style.display = 'none';
+  document.getElementById('detail-scroll').style.display = 'block';
+  document.getElementById('decision-panel').style.display = 'block';
+  document.getElementById('dec-counter').textContent = (idx+1)+'/5';
+
+  // Reset scroll
+  document.getElementById('detail-scroll').scrollTop = 0;
+
+  // Build choices
+  const cw = document.getElementById('choices-wrap');
+  cw.innerHTML = '';
+  e.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-key">${c.key}</span><span>${c.text}</span>`;
+    if (done[idx]) {
+      btn.style.pointerEvents = 'none';
+      const chosen = done[idx];
+      btn.style.opacity = chosen===c.key?'1':'0.35';
+      if (chosen===c.key) {
+        const ch = e.choices.find(x=>x.key===chosen);
+        btn.style.borderColor = ch.quality==='good'?'#057a55':ch.quality==='warn'?'#d97706':'#e02424';
+        btn.style.background = ch.quality==='good'?'#f3faf7':ch.quality==='warn'?'#fffbeb':'#fdf2f2';
+      }
+    }
+    btn.addEventListener('click', () => handleChoice(idx, c, btn));
+    cw.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  const nb = document.getElementById('next-btn');
+  if (done[idx]) {
+    const ch = e.choices.find(x=>x.key===done[idx]);
+    showFeedback(ch);
+    nb.style.display = 'block';
+    nb.textContent = idx < emails.length-1 ? 'Next email →' : 'See results →';
+  } else {
+    fb.style.display = 'none';
+    nb.style.display = 'none';
+  }
+
+  buildList();
+}
+
+function handleChoice(idx, choice, btn) {
+  if (done[idx]) return;
+  done[idx] = choice.key;
+  if (choice.quality==='good') score++;
+  if(window._fbTrack) _fbTrack('choice', {
+    scene: idx,
+    email_from: emails[idx].fromName,
+    option: choice.key,
+    correct: choice.quality==='good'
+  });
+
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.style.pointerEvents='none';
+    b.style.opacity = b===btn?'1':'0.35';
+  });
+  btn.style.borderColor = choice.quality==='good'?'#057a55':choice.quality==='warn'?'#d97706':'#e02424';
+  btn.style.background = choice.quality==='good'?'#f3faf7':choice.quality==='warn'?'#fffbeb':'#fdf2f2';
+  showFeedback(choice);
+
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = idx<emails.length-1?'Next email →':'See results →';
+
+  // Scroll to feedback
+  setTimeout(() => {
+    document.getElementById('feedback').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }, 200);
+
+  updateProgress();
+  buildList();
+  if (idx<emails.length-1) {
+    const nr = document.getElementById('erow-'+(idx+1));
+    if (nr) nr.classList.remove('locked');
+  }
+}
+
+function showFeedback(choice) {
+  const fb = document.getElementById('feedback');
+  document.getElementById('fb-label').textContent = choice.label;
+  document.getElementById('fb-text').textContent = choice.feedback;
+  fb.className = 'feedback '+(choice.quality==='good'?'good':choice.quality==='warn'?'warn':'bad');
+  fb.style.display = 'block';
+}
+
+function updateProgress() {
+  const n = Object.keys(done).length;
+  const pct = n/emails.length*100;
+  document.getElementById('topbar-fill').style.width = pct+'%';
+  document.getElementById('topbar-score').textContent = score+'/'+n;
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (current < emails.length-1) {
+    openEmail(current+1);
+  } else showResults();
+});
+
+document.getElementById('back-btn').addEventListener('click', () => {
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('list-view').style.display = 'flex';
+  current = -1;
+  buildList();
+});
+
+function showResults() {
+  const pct = Math.round(score/emails.length*100);
+  if(window._fbComplete) _fbComplete(score, emails.length);
+  const col = pct>=80?'#057a55':pct>=60?'#d97706':'#e02424';
+  const verdicts = [
+    "Critical gaps. You missed most red flags and some choices would have worsened the fraud. Revisit this module with your compliance team.",
+    "Several poor decisions. You identified some signals but yielded to pressure. Review where you chose expediency over formal action.",
+    "Adequate. You caught the main signals but hesitated on key escalation steps. Review the nuances in the emails you got wrong.",
+    "Strong performance. Mostly correct calls. One or two grey areas — review those decisions carefully.",
+    "Excellent. Every fraud signal identified, escalation correct, client transparency maintained. This is the PMC standard."
+  ];
+  const learnings = [
+    "Anonymous complaints must go to Compliance immediately — never to the person named in the complaint.",
+    "Any certification based solely on contractor-provided data without independent physical measurement is a control failure.",
+    "When a certifying engineer is under investigation, suspend duties and preserve all records before any further contact with the contractor.",
+    "Transparent, proactive client disclosure — especially showing you identified the issue first — protects SYSTRA far more than any defensive response.",
+    "Best prevention: independent third-party QS above a threshold + random spot checks below it + engineer rotation."
+  ];
+  const vi = Math.min(Math.floor(pct/25),4);
+  document.getElementById('res-top').style.background = col;
+  document.getElementById('res-big').textContent = score+'/5';
+  document.getElementById('res-big').style.color = col;
+  document.getElementById('res-bar').style.background = col;
+  document.getElementById('res-pct').textContent = pct+'% correct decisions';
+  document.getElementById('res-verdict').textContent = verdicts[vi];
+  const ul = document.getElementById('res-ul');
+  ul.innerHTML='';
+  learnings.forEach(l=>{const li=document.createElement('li');li.textContent=l;ul.appendChild(li);});
+  document.getElementById('results').classList.add('show');
+  setTimeout(()=>document.getElementById('res-bar').style.width=pct+'%',300);
+  document.getElementById('btn-close').onclick=()=>document.getElementById('results').classList.remove('show');
+  document.getElementById('btn-restart').onclick=()=>{
+    document.getElementById('results').classList.remove('show');
+    Object.keys(done).forEach(k=>delete done[k]);
+    score=0;current=-1;
+    updateProgress();
+    buildList();
+    if(isMobile()){document.getElementById('list-view').style.display='flex';document.getElementById('detail-view').style.display='none';}
+    else{document.getElementById('welcome-pane').style.display='flex';document.getElementById('detail-scroll').style.display='none';document.getElementById('decision-panel').style.display='none';}
+    document.getElementById('inbox-badge').textContent=emails.length;
+  };
+}
+
+window.addEventListener('resize',()=>{
+  if(!isMobile()){
+    document.getElementById('list-view').style.display='';
+    document.getElementById('detail-view').style.display='flex';
+  }
+});
+
+document.getElementById('start-btn').addEventListener('click',()=>{
+  document.getElementById('intro').style.display='none';
+  document.getElementById('app').style.display='flex';
+  if(window._fbStart) _fbStart();
+  if(isMobile()){document.getElementById('detail-view').style.display='none';}
+  buildList();
+});
+</script>
+</body>
+</html>
