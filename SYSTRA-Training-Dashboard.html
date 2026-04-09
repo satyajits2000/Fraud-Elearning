@@ -3,195 +3,280 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SYSTRA Fraud Training — Live Dashboard</title>
+<title>SYSTRA Fraud Training — Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;500;600;700&display=swap');
 :root{
-  --bg:#0f1117; --surface:#181c25; --surface2:#1e2330; --border:#252b3b;
-  --blue:#4f7df7; --green:#22c55e; --red:#ef4444; --amber:#f59e0b;
-  --text:#e2e8f0; --muted:#64748b; --gold:#f0c040;
-  --mono:'Share Tech Mono',monospace; --head:'Barlow Condensed',sans-serif; --body:'Inter',sans-serif;
+  --bg:#0f1117;--surface:#181c25;--surface2:#1e2330;--border:#252b3b;
+  --red:#d22328;--teal:#003e4a;--green:#22c55e;--amber:#f59e0b;--danger:#ef4444;
+  --text:#e2e8f0;--muted:#64748b;--blue:#4f7df7;
+  --mono:'Share Tech Mono',monospace;--head:'Barlow Condensed',sans-serif;--body:'Inter',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;font-size:14px}
 
-/* Top bar */
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.topbar-logo{font-family:var(--head);font-size:22px;font-weight:900;color:#fff}
-.topbar-logo span{color:var(--gold)}
-.topbar-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:1px}
-.live-pill{display:flex;align-items:center;gap:6px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--green);font-weight:600;margin-left:auto}
+/* TOP BAR */
+.topbar{background:var(--teal);border-bottom:3px solid var(--red);padding:12px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.tb-logo{font-family:var(--head);font-size:22px;font-weight:900;color:#fff}
+.tb-logo span{color:var(--red)}
+.tb-title{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:2px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.live-pill{display:flex;align-items:center;gap:6px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.35);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--green);font-weight:600}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.topbar-time{font-family:var(--mono);font-size:11px;color:var(--muted)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#clock{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.4)}
 
-/* Stats strip */
-.stats-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding:20px 24px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
-.stat-val{font-family:var(--head);font-size:36px;font-weight:900;color:#fff;line-height:1}
-.stat-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:6px;text-transform:uppercase}
-.stat-delta{font-size:11px;color:var(--green);margin-top:4px;font-weight:600}
+/* SESSION PANEL */
+.session-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.session-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+.session-name{font-family:var(--head);font-size:18px;font-weight:700;color:#fff;flex:1;min-width:160px}
+.session-name.placeholder{color:var(--muted);font-weight:400;font-size:14px;font-family:var(--body)}
+.btn{border:none;cursor:pointer;font-family:var(--body);font-weight:600;border-radius:6px;padding:8px 16px;font-size:13px;transition:opacity 0.2s,transform 0.1s;white-space:nowrap}
+.btn:hover{opacity:0.85;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-red{background:var(--red);color:#fff}
+.btn-teal{background:var(--teal);color:#fff;border:1px solid rgba(255,255,255,0.2)}
+.btn-green{background:var(--green);color:#000}
+.btn-amber{background:var(--amber);color:#000}
+.btn-dark{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
 
-/* Module tabs */
-.tabs{display:flex;gap:4px;padding:0 24px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tab{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--body)}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:10px;width:100%;max-width:480px;overflow:hidden}
+.modal-head{background:var(--teal);padding:20px 24px;border-bottom:3px solid var(--red)}
+.modal-title{font-family:var(--head);font-size:22px;font-weight:900;color:#fff;margin-bottom:4px}
+.modal-sub{font-size:12px;color:rgba(255,255,255,0.55);font-family:var(--mono);letter-spacing:1px}
+.modal-body{padding:24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-family:var(--mono)}
+.field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:var(--text);font-size:14px;font-family:var(--body);outline:none;transition:border-color 0.2s}
+.field input:focus,.field select:focus{border-color:var(--red)}
+.field input::placeholder{color:var(--muted)}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+
+/* STATS STRIP */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;padding:16px 24px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.stat-val{font-family:var(--head);font-size:32px;font-weight:900;color:#fff;line-height:1}
+.stat-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:5px;text-transform:uppercase}
+
+/* TABS */
+.tabs{display:flex;gap:4px;padding:0 24px 12px;overflow-x:auto}
+.tab{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 16px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;font-family:var(--body);transition:all 0.15s}
 .tab:hover{color:var(--text)}
-.tab.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.tab.active{background:var(--red);border-color:var(--red);color:#fff}
 
-/* Main grid */
-.main-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 24px 24px}
-@media(max-width:900px){.main-grid{grid-template-columns:1fr}}
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 24px 24px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
 
-/* Panel */
+/* PANEL */
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.panel-title{font-family:var(--head);font-size:16px;font-weight:700;letter-spacing:.5px}
+.panel-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-family:var(--head);font-size:15px;font-weight:700;letter-spacing:0.5px}
 .panel-sub{font-family:var(--mono);font-size:10px;color:var(--muted)}
-.panel-body{padding:16px 18px}
+.panel-body{padding:14px 16px}
 
-/* Scene bars */
-.scene-row{margin-bottom:16px}
-.scene-label{font-size:12px;color:var(--text);margin-bottom:6px;display:flex;justify-content:space-between}
-.scene-label span{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.option-bars{display:flex;flex-direction:column;gap:4px}
-.opt-row{display:flex;align-items:center;gap:8px}
-.opt-key{font-family:var(--mono);font-size:10px;color:var(--muted);width:16px;text-align:right;flex-shrink:0}
-.opt-bar-wrap{flex:1;height:22px;background:var(--surface2);border-radius:4px;overflow:hidden;position:relative}
-.opt-bar{height:100%;border-radius:4px;transition:width .8s ease;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:#fff;white-space:nowrap;min-width:0}
-.opt-bar.best{background:rgba(34,197,94,.35);border:1px solid rgba(34,197,94,.5)}
-.opt-bar.warn{background:rgba(245,158,11,.3);border:1px solid rgba(245,158,11,.4)}
-.opt-bar.bad{background:rgba(239,68,68,.3);border:1px solid rgba(239,68,68,.4)}
-.opt-pct{font-family:var(--mono);font-size:11px;color:var(--muted);width:32px;text-align:right;flex-shrink:0}
+/* PARTICIPANT TABLE */
+.ptable{width:100%;border-collapse:collapse}
+.ptable th{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.ptable td{padding:8px 10px;border-bottom:1px solid rgba(37,43,59,0.5);font-size:13px;vertical-align:middle}
+.ptable tr:last-child td{border-bottom:none}
+.score-chip{font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:10px}
+.score-chip.high{background:rgba(34,197,94,0.15);color:var(--green)}
+.score-chip.mid{background:rgba(245,158,11,0.15);color:var(--amber)}
+.score-chip.low{background:rgba(239,68,68,0.15);color:var(--danger)}
+.dept-chip{font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius(3px);padding:1px 7px;border-radius:3px;color:var(--muted)}
 
-/* Score distribution */
-.score-dist{display:flex;gap:6px;align-items:flex-end;height:80px;padding-bottom:4px}
-.score-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.score-bar-outer{width:100%;background:var(--surface2);border-radius:4px 4px 0 0;position:relative;overflow:hidden;flex:1;min-height:4px}
-.score-bar-inner{position:absolute;bottom:0;left:0;right:0;background:var(--blue);border-radius:4px 4px 0 0;transition:height .8s ease}
-.score-col-label{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center}
-.score-col-val{font-family:var(--mono);font-size:11px;color:var(--text);text-align:center}
+/* SCENE BARS */
+.scene-row{margin-bottom:14px}
+.scene-row-label{font-size:12px;color:var(--text);margin-bottom:5px;display:flex;justify-content:space-between}
+.scene-row-label span{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.opt-bars{display:flex;flex-direction:column;gap:3px}
+.opt-row{display:flex;align-items:center;gap:7px}
+.opt-key{font-family:var(--mono);font-size:10px;color:var(--muted);width:14px;text-align:right;flex-shrink:0}
+.opt-bar-wrap{flex:1;height:20px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.opt-bar{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:7px;font-size:11px;font-weight:600;color:#fff;transition:width 0.8s ease;min-width:0}
+.opt-bar.best{background:rgba(34,197,94,0.35);border:1px solid rgba(34,197,94,0.5)}
+.opt-bar.warn{background:rgba(245,158,11,0.3);border:1px solid rgba(245,158,11,0.4)}
+.opt-bar.bad{background:rgba(239,68,68,0.3);border:1px solid rgba(239,68,68,0.4)}
+.opt-pct{font-family:var(--mono);font-size:10px;color:var(--muted);width:30px;text-align:right;flex-shrink:0}
 
-/* Recent sessions */
-.session-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
-.session-row:last-child{border-bottom:none}
-.sess-avatar{width:28px;height:28px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-.sess-info{flex:1;min-width:0}
-.sess-module{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sess-time{font-family:var(--mono);font-size:10px;color:var(--muted)}
-.sess-score{font-family:var(--head);font-size:20px;font-weight:900}
-.sess-dur{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right}
+/* SCORE DIST */
+.score-dist{display:flex;gap:5px;align-items:flex-end;height:70px}
+.sc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.sc-outer{width:100%;background:var(--surface2);border-radius:3px 3px 0 0;position:relative;overflow:hidden;flex:1}
+.sc-inner{position:absolute;bottom:0;left:0;right:0;border-radius:3px 3px 0 0;transition:height 0.8s ease}
+.sc-lbl{font-family:var(--mono);font-size:9px;color:var(--muted)}
+.sc-val{font-family:var(--mono);font-size:10px;color:var(--text)}
 
-/* Alert if no data */
-.empty-state{text-align:center;padding:32px 20px;color:var(--muted)}
-.empty-icon{font-size:32px;margin-bottom:8px}
+/* HARDEST */
+.hard-row{margin-bottom:12px}
+.hard-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.hard-bar-wrap{height:7px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.hard-bar{height:100%;border-radius:4px;transition:width 0.8s ease}
+
+/* EMPTY */
+.empty{text-align:center;padding:28px 16px;color:var(--muted)}
+.empty-icon{font-size:28px;margin-bottom:8px}
 .empty-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
 .empty-sub{font-size:12px;line-height:1.5}
 
-/* Module badge */
-.mod-badge{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700}
-.mod-1{background:rgba(79,125,247,.2);color:#7fa8ff}
-.mod-2{background:rgba(240,192,64,.2);color:#f0c040}
-.mod-3{background:rgba(168,85,247,.2);color:#c084fc}
-.mod-4{background:rgba(34,197,94,.2);color:#4ade80}
-
-/* Refresh btn */
-.refresh-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--body);transition:color .2s}
-.refresh-btn:hover{color:var(--text)}
+/* EXPORT SECTION */
+.export-section{padding:0 24px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.export-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
 
 @media(max-width:600px){
-  .stats-strip{grid-template-columns:repeat(2,1fr);padding:14px}
-  .main-grid{padding:0 14px 24px}
-  .tabs{padding:0 14px 14px}
-  .topbar{padding:12px 14px}
+  .topbar{padding:10px 14px}
+  .stats{padding:12px 14px}
+  .grid{padding:0 14px 20px}
+  .tabs{padding:0 14px 10px}
+  .session-bar{padding:12px 14px}
+  .export-section{padding:0 14px 20px}
 }
 </style>
 </head>
 <body>
 
+<!-- TOP BAR -->
 <div class="topbar">
   <div>
-    <div class="topbar-logo">SYSTRA <span>PMC</span></div>
-    <div class="topbar-sub">FRAUD AWARENESS TRAINING · LIVE ANALYTICS</div>
+    <div class="tb-logo">SYS<span>T</span>RA</div>
+    <div class="tb-title">FRAUD AWARENESS · TRAINING DASHBOARD</div>
   </div>
-  <div class="live-pill"><div class="live-dot"></div>LIVE</div>
-  <div class="topbar-time" id="clock">--:--:--</div>
-  <button class="refresh-btn" onclick="loadData()">↺ Refresh</button>
+  <div class="tb-right">
+    <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+    <div id="clock">--:--:--</div>
+  </div>
 </div>
 
-<div class="stats-strip">
-  <div class="stat-card"><div class="stat-val" id="s-total">0</div><div class="stat-label">Total Sessions</div><div class="stat-delta" id="s-today">0 today</div></div>
-  <div class="stat-card"><div class="stat-val" id="s-complete">0</div><div class="stat-label">Completed</div><div class="stat-delta" id="s-rate">0% rate</div></div>
-  <div class="stat-card"><div class="stat-val" id="s-avgscore">—</div><div class="stat-label">Avg Score</div><div class="stat-delta" id="s-best-mod">—</div></div>
-  <div class="stat-card"><div class="stat-val" id="s-avgtime">—</div><div class="stat-label">Avg Time</div><div class="stat-delta">minutes per module</div></div>
+<!-- SESSION BAR -->
+<div class="session-bar">
+  <div>
+    <div class="session-label">Current Session</div>
+    <div class="session-name" id="session-name-display">
+      <span class="placeholder">No session active — click "New Session" to start</span>
+    </div>
+  </div>
+  <button class="btn btn-red" onclick="showNewSession()">+ New Session</button>
+  <button class="btn btn-amber" onclick="confirmClearData()">🗑 Clear Data</button>
+  <button class="btn btn-green" onclick="exportCSV()">↓ Export CSV</button>
+  <button class="btn btn-dark" onclick="loadData()">↺ Refresh</button>
 </div>
 
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-val" id="s-participants">0</div><div class="stat-label">Participants</div></div>
+  <div class="stat"><div class="stat-val" id="s-completed">0</div><div class="stat-label">Completed</div></div>
+  <div class="stat"><div class="stat-val" id="s-avg-score">—</div><div class="stat-label">Avg Score</div></div>
+  <div class="stat"><div class="stat-val" id="s-avg-time">—</div><div class="stat-label">Avg Time</div></div>
+  <div class="stat"><div class="stat-val" id="s-session-id" style="font-size:14px;padding-top:4px">—</div><div class="stat-label">Session</div></div>
+</div>
+
+<!-- TABS -->
 <div class="tabs">
-  <div class="tab active" onclick="setModule('all',this)">All Modules</div>
-  <div class="tab" onclick="setModule('Unplanned Attack',this)">Module 1 — Cyber</div>
-  <div class="tab" onclick="setModule('CV Fraud Detection',this)">Module 2 — CV Fraud</div>
-  <div class="tab" onclick="setModule('Manager',this)">Module 3 — Dilemma</div>
-  <div class="tab" onclick="setModule('Anonymous Complaint',this)">Module 4 — Billing</div>
+  <div class="tab active" onclick="setTab('participants',this)">Participants</div>
+  <div class="tab" onclick="setTab('scenes',this)">Scene Analysis</div>
+  <div class="tab" onclick="setTab('scores',this)">Score Distribution</div>
+  <div class="tab" onclick="setTab('hardest',this)">Training Gaps</div>
 </div>
 
-<div class="main-grid">
+<!-- GRID -->
+<div class="grid">
 
-  <!-- Scene breakdown -->
-  <div class="panel">
+  <!-- LEFT PANEL -->
+  <div class="panel" id="left-panel">
     <div class="panel-head">
-      <div class="panel-title">Choice Distribution by Scene</div>
-      <div class="panel-sub" id="scene-panel-sub">All modules</div>
+      <div class="panel-title" id="left-title">Participants</div>
+      <div class="panel-sub" id="left-sub">Name · Department · Score</div>
     </div>
-    <div class="panel-body" id="scene-panel">
-      <div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Waiting for responses</div><div class="empty-sub">Data will appear here as participants complete modules via the QR code.</div></div>
+    <div class="panel-body" id="left-body">
+      <div class="empty"><div class="empty-icon">👤</div><div class="empty-title">No participants yet</div><div class="empty-sub">Start a session and share the QR code. Participants appear here as they complete the module.</div></div>
     </div>
   </div>
 
-  <!-- Score distribution -->
-  <div class="panel">
+  <!-- RIGHT PANEL -->
+  <div class="panel" id="right-panel">
     <div class="panel-head">
-      <div class="panel-title">Score Distribution</div>
-      <div class="panel-sub">How participants scored</div>
+      <div class="panel-title" id="right-title">Scene Analysis</div>
+      <div class="panel-sub" id="right-sub">Choice distribution per scene</div>
     </div>
-    <div class="panel-body">
-      <div class="score-dist" id="score-dist">
-        <div class="score-col"><div class="score-bar-outer"><div class="score-bar-inner" id="sd-0" style="height:0%"></div></div><div class="score-col-label">0</div><div class="score-col-val" id="sdv-0">0</div></div>
-        <div class="score-col"><div class="score-bar-outer"><div class="score-bar-inner" id="sd-1" style="height:0%"></div></div><div class="score-col-label">1</div><div class="score-col-val" id="sdv-1">0</div></div>
-        <div class="score-col"><div class="score-bar-outer"><div class="score-bar-inner" id="sd-2" style="height:0%"></div></div><div class="score-col-label">2</div><div class="score-col-val" id="sdv-2">0</div></div>
-        <div class="score-col"><div class="score-bar-outer"><div class="score-bar-inner" id="sd-3" style="height:0%"></div></div><div class="score-col-label">3</div><div class="score-col-val" id="sdv-3">0</div></div>
-        <div class="score-col"><div class="score-bar-outer"><div class="score-bar-inner" id="sd-4" style="height:0%"></div></div><div class="score-col-label">4</div><div class="score-col-val" id="sdv-4">0</div></div>
-        <div class="score-col"><div class="score-bar-outer"><div class="score-bar-inner" id="sd-5" style="height:0%"></div></div><div class="score-col-label">5</div><div class="score-col-val" id="sdv-5">0</div></div>
+    <div class="panel-body" id="right-body">
+      <div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Waiting for responses</div><div class="empty-sub">Choice breakdowns appear here as participants answer each scene.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXPORT -->
+<div class="export-section">
+  <span class="export-label">Export:</span>
+  <button class="btn btn-dark" onclick="exportCSV()">↓ Download CSV</button>
+  <button class="btn btn-dark" onclick="exportJSON()">↓ Download JSON</button>
+  <span style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:8px" id="export-info">All data for current session</span>
+</div>
+
+<!-- NEW SESSION MODAL -->
+<div class="modal-overlay" id="modal-new">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Start New Session</div>
+      <div class="modal-sub">LABEL THIS TRAINING RUN FOR TRACKING</div>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Session Name</label>
+        <input type="text" id="inp-session" placeholder="e.g. Paris Team — April 2026" maxlength="60">
       </div>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:12px;text-align:center">Score out of 5 · green = 4–5, amber = 3, red = 0–2</div>
+      <div class="field">
+        <label>Location / Office</label>
+        <input type="text" id="inp-location" placeholder="e.g. Paris HQ, London, Remote" maxlength="40">
+      </div>
+      <div class="field">
+        <label>Training Format</label>
+        <select id="inp-format">
+          <option value="face-to-face">Face-to-face workshop</option>
+          <option value="elearning">eLearning (self-paced)</option>
+          <option value="hybrid">Hybrid</option>
+          <option value="webinar">Webinar / online session</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Facilitator Name</label>
+        <input type="text" id="inp-facilitator" placeholder="Your name" maxlength="40">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" onclick="closeModal('modal-new')">Cancel</button>
+      <button class="btn btn-red" onclick="createSession()">Start Session →</button>
     </div>
   </div>
+</div>
 
-  <!-- Recent sessions -->
-  <div class="panel">
-    <div class="panel-head">
-      <div class="panel-title">Recent Sessions</div>
-      <div class="panel-sub" id="recent-count">Last 20</div>
+<!-- CLEAR CONFIRM MODAL -->
+<div class="modal-overlay" id="modal-clear">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Clear Session Data</div>
+      <div class="modal-sub">THIS CANNOT BE UNDONE</div>
     </div>
-    <div class="panel-body" id="recent-panel">
-      <div class="empty-state"><div class="empty-icon">👤</div><div class="empty-title">No sessions yet</div><div class="empty-sub">Sessions appear here as participants complete modules.</div></div>
+    <div class="modal-body">
+      <p style="font-size:14px;line-height:1.7;color:var(--muted);margin-bottom:16px">This will permanently delete all response data for the <strong style="color:var(--text)" id="clear-session-name">current session</strong> from Firebase.</p>
+      <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;padding:12px 14px;font-size:13px;color:#fca5a5;line-height:1.6">
+        ⚠ Export the CSV first if you want to keep a record before clearing.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-dark" onclick="closeModal('modal-clear')">Cancel</button>
+      <button class="btn btn-red" onclick="clearData()">Delete All Data</button>
     </div>
   </div>
-
-  <!-- Hardest scenes -->
-  <div class="panel">
-    <div class="panel-head">
-      <div class="panel-title">Hardest Scenes</div>
-      <div class="panel-sub">Where most people get it wrong</div>
-    </div>
-    <div class="panel-body" id="hardest-panel">
-      <div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-title">Awaiting data</div><div class="empty-sub">Once responses arrive, this panel shows your biggest training gaps.</div></div>
-    </div>
-  </div>
-
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getDatabase, ref, onValue, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+import { getDatabase, ref, onValue, remove, set, push } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBfOLbrbp4Sf9nXYuWn3Fv5k0CcqMPX1NI",
@@ -207,186 +292,389 @@ const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
 let allData = [];
-let currentModule = 'all';
+let currentTab = 'participants';
+let currentSession = null;
 
-// Clock
+// ── CLOCK ──
 setInterval(() => {
   document.getElementById('clock').textContent = new Date().toLocaleTimeString();
 }, 1000);
 
-// Live listener
+// ── SESSION MANAGEMENT ──
+window.showNewSession = () => {
+  document.getElementById('inp-session').value = '';
+  document.getElementById('inp-location').value = '';
+  document.getElementById('inp-facilitator').value = '';
+  document.getElementById('modal-new').classList.add('show');
+  setTimeout(() => document.getElementById('inp-session').focus(), 100);
+};
+
+window.createSession = () => {
+  const name = document.getElementById('inp-session').value.trim();
+  const location = document.getElementById('inp-location').value.trim();
+  const format = document.getElementById('inp-format').value;
+  const facilitator = document.getElementById('inp-facilitator').value.trim();
+  if (!name) { document.getElementById('inp-session').focus(); return; }
+
+  const sessionId = 'session_' + Date.now();
+  currentSession = { id: sessionId, name, location, format, facilitator, created: new Date().toISOString() };
+
+  // Save session meta to Firebase
+  set(ref(db, 'sessions/' + sessionId), currentSession);
+
+  // Save to localStorage so it persists on refresh
+  localStorage.setItem('systra_current_session', JSON.stringify(currentSession));
+
+  updateSessionDisplay();
+  closeModal('modal-new');
+};
+
+function loadSession() {
+  const saved = localStorage.getItem('systra_current_session');
+  if (saved) {
+    try { currentSession = JSON.parse(saved); updateSessionDisplay(); } catch(e) {}
+  }
+}
+
+function updateSessionDisplay() {
+  if (!currentSession) return;
+  const el = document.getElementById('session-name-display');
+  el.innerHTML = `<strong>${currentSession.name}</strong>&nbsp;&nbsp;<span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${currentSession.location || ''} · ${currentSession.format || ''} · ${currentSession.facilitator || ''}</span>`;
+  el.className = 'session-name';
+  document.getElementById('s-session-id').textContent = currentSession.name.substring(0,16);
+  document.getElementById('clear-session-name').textContent = '"' + currentSession.name + '"';
+}
+
+window.closeModal = (id) => document.getElementById(id).classList.remove('show');
+
+// ── CLEAR DATA ──
+window.confirmClearData = () => {
+  if (!currentSession) { alert('Start a session first before clearing data.'); return; }
+  document.getElementById('modal-clear').classList.add('show');
+};
+
+window.clearData = async () => {
+  // Only delete responses that belong to this session
+  const toDelete = allData.filter(d => d._key && d.session_label === currentSession.id);
+  const promises = toDelete.map(d => remove(ref(db, 'responses/' + d._key)));
+  await Promise.all(promises);
+  closeModal('modal-clear');
+};
+
+// ── LIVE LISTENER ──
 onValue(ref(db, 'responses'), (snapshot) => {
   allData = [];
-  snapshot.forEach(child => { allData.push(child.val()); });
+  snapshot.forEach(child => {
+    allData.push({ _key: child.key, ...child.val() });
+  });
   render();
 });
 
-window.setModule = function(mod, el) {
-  currentModule = mod;
+// ── FILTER BY SESSION ──
+function getFiltered() {
+  if (!currentSession) return allData;
+  // Filter by session label OR show all if no session labeling in data yet
+  const sessionData = allData.filter(d => d.session_label === currentSession.id);
+  return sessionData.length > 0 ? sessionData : allData;
+}
+
+// ── TABS ──
+window.setTab = (tab, el) => {
+  currentTab = tab;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   render();
 };
 
-window.loadData = function() { render(); };
-
-function getFiltered() {
-  if (currentModule === 'all') return allData;
-  return allData.filter(d => d.module && d.module.includes(currentModule));
-}
-
+// ── RENDER ──
 function render() {
   const data = getFiltered();
   renderStats(data);
-  renderScenes(data);
-  renderScoreDist(data);
-  renderRecent(data);
-  renderHardest(data);
+  if (currentTab === 'participants') renderParticipants(data);
+  else if (currentTab === 'scenes') renderScenes(data);
+  else if (currentTab === 'scores') renderScores(data);
+  else if (currentTab === 'hardest') renderHardest(data);
 }
 
+// ── STATS ──
 function renderStats(data) {
   const starts    = data.filter(d => d.event === 'module_start');
   const completes = data.filter(d => d.event === 'module_complete');
-  const today     = starts.filter(d => d.timestamp && d.timestamp.startsWith(new Date().toISOString().substring(0,10)));
-
-  document.getElementById('s-total').textContent    = starts.length;
-  document.getElementById('s-today').textContent    = today.length + ' today';
-  document.getElementById('s-complete').textContent = completes.length;
-  document.getElementById('s-rate').textContent     = starts.length ? Math.round(completes.length/starts.length*100)+'% rate' : '0% rate';
-
+  // Unique participants by session_id
+  const uniqueSessions = [...new Set(starts.map(d => d.session_id))];
+  document.getElementById('s-participants').textContent = uniqueSessions.length;
+  document.getElementById('s-completed').textContent    = completes.length;
   if (completes.length) {
-    const avg = completes.reduce((s,d) => s + (d.pct||0), 0) / completes.length;
-    document.getElementById('s-avgscore').textContent = Math.round(avg) + '%';
-    const avgT = completes.reduce((s,d) => s + (d.duration_seconds||0), 0) / completes.length;
-    document.getElementById('s-avgtime').textContent  = (avgT/60).toFixed(1);
-    const byMod = {};
-    completes.forEach(d => { if(!byMod[d.module]) byMod[d.module]=[]; byMod[d.module].push(d.pct||0); });
-    let bestMod='', bestAvg=0;
-    Object.entries(byMod).forEach(([m,ps]) => { const a=ps.reduce((s,v)=>s+v,0)/ps.length; if(a>bestAvg){bestAvg=a;bestMod=m;} });
-    document.getElementById('s-best-mod').textContent = bestMod ? 'Best: ' + bestMod.substring(0,20) : '—';
+    const avg = completes.reduce((s,d) => s+(d.pct||0), 0) / completes.length;
+    document.getElementById('s-avg-score').textContent = Math.round(avg) + '%';
+    const avgT = completes.filter(d=>d.duration_seconds).reduce((s,d) => s+d.duration_seconds, 0) / completes.length;
+    document.getElementById('s-avg-time').textContent = (avgT/60).toFixed(1) + 'm';
+  } else {
+    document.getElementById('s-avg-score').textContent = '—';
+    document.getElementById('s-avg-time').textContent  = '—';
   }
+  document.getElementById('export-info').textContent = uniqueSessions.length + ' participants · ' + data.length + ' events';
 }
 
-function renderScenes(data) {
-  const choices = data.filter(d => d.event === 'choice');
-  if (!choices.length) return;
+// ── PARTICIPANTS TABLE ──
+function renderParticipants(data) {
+  document.getElementById('left-title').textContent = 'Participants';
+  document.getElementById('left-sub').textContent   = 'Name · Department · Score';
+  document.getElementById('right-title').textContent = 'Score Distribution';
+  document.getElementById('right-sub').textContent   = 'How participants scored';
 
-  // Group by scene
-  const scenes = {};
-  choices.forEach(d => {
-    const key = (d.scene_title || d.chat_person || d.email_from || ('Scene ' + (d.scene+1))) + '';
-    if (!scenes[key]) scenes[key] = { A:0, B:0, C:0, total:0 };
-    const opt = (d.option||'').toString().toUpperCase();
-    if (scenes[key][opt] !== undefined) scenes[key][opt]++;
-    scenes[key].total++;
+  const completes = data.filter(d => d.event === 'module_complete');
+  const starts    = data.filter(d => d.event === 'module_start');
+
+  if (!starts.length) {
+    document.getElementById('left-body').innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-title">No participants yet</div><div class="empty-sub">Share the QR code. Participants appear here as they complete the module.</div></div>`;
+    document.getElementById('right-body').innerHTML = `<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">No data yet</div></div>`;
+    return;
+  }
+
+  // Group by session_id
+  const bySession = {};
+  data.forEach(d => {
+    if (!bySession[d.session_id]) bySession[d.session_id] = { start:null, complete:null, choices:[] };
+    if (d.event === 'module_start') bySession[d.session_id].start = d;
+    if (d.event === 'module_complete') bySession[d.session_id].complete = d;
+    if (d.event === 'choice') bySession[d.session_id].choices.push(d);
   });
 
-  document.getElementById('scene-panel-sub').textContent = currentModule === 'all' ? 'All modules' : currentModule;
-
-  let html = '';
-  Object.entries(scenes).slice(0,8).forEach(([label, counts]) => {
-    const total = counts.total || 1;
-    html += `<div class="scene-row">
-      <div class="scene-label">${label.substring(0,40)} <span>${total} responses</span></div>
-      <div class="option-bars">`;
-    ['A','B','C'].forEach(opt => {
-      const pct = Math.round((counts[opt]||0)/total*100);
-      const cls = opt==='A'?'bad':opt==='B'?'best':'warn';
-      html += `<div class="opt-row">
-        <div class="opt-key">${opt}</div>
-        <div class="opt-bar-wrap"><div class="opt-bar ${cls}" style="width:${pct}%">${pct>15?pct+'%':''}</div></div>
-        <div class="opt-pct">${pct}%</div>
-      </div>`;
-    });
-    html += `</div></div>`;
+  let rows = '';
+  Object.values(bySession).forEach((s, i) => {
+    const name   = s.start?.participant_name || 'Anonymous';
+    const dept   = s.start?.department || '—';
+    const mod    = s.start?.module || s.complete?.module || '—';
+    const score  = s.complete ? (s.complete.score + '/' + s.complete.total) : '—';
+    const pct    = s.complete?.pct || 0;
+    const dur    = s.complete?.duration_seconds ? Math.round(s.complete.duration_seconds/60) + 'm' : '—';
+    const chip   = !s.complete ? 'mid' : pct>=80?'high':pct>=60?'mid':'low';
+    const ts     = s.start?.timestamp ? new Date(s.start.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '—';
+    rows += `<tr>
+      <td style="color:${s.complete?'var(--text)':'var(--muted)'}">${name}</td>
+      <td><span class="dept-chip">${dept}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${mod.substring(0,16)}</td>
+      <td><span class="score-chip ${chip}">${score}</span></td>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${dur}</td>
+      <td style="font-family:var(--mono);font-size:10px;color:var(--muted)">${ts}</td>
+    </tr>`;
   });
-  document.getElementById('scene-panel').innerHTML = html || '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Waiting for choices</div></div>';
+
+  document.getElementById('left-body').innerHTML = `
+    <div style="overflow-x:auto">
+    <table class="ptable">
+      <thead><tr>
+        <th>Name</th><th>Dept</th><th>Module</th><th>Score</th><th>Time</th><th>Started</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+
+  // Score distribution on right
+  renderScoreDist(data, 'right-body');
 }
 
-function renderScoreDist(data) {
-  const completes = data.filter(d => d.event==='module_complete' && d.score !== undefined);
-  if (!completes.length) return;
+function renderScoreDist(data, targetId) {
+  const completes = data.filter(d => d.event==='module_complete' && d.score!==undefined);
+  if (!completes.length) { document.getElementById(targetId).innerHTML = `<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">No completed sessions yet</div></div>`; return; }
   const buckets = [0,0,0,0,0,0];
-  completes.forEach(d => { const s=Math.min(Math.max(Math.round(d.score),0),5); buckets[s]++; });
-  const maxB = Math.max(...buckets, 1);
+  completes.forEach(d => buckets[Math.min(Math.max(Math.round(d.score),0),5)]++);
+  const maxB = Math.max(...buckets,1);
+  let html = `<div class="score-dist">`;
   buckets.forEach((v,i) => {
     const pct = Math.round(v/maxB*100);
-    const el = document.getElementById('sd-'+i);
-    if (el) { el.style.height = pct+'%'; el.style.background = i>=4?'#22c55e':i===3?'#f59e0b':'#ef4444'; }
-    const vl = document.getElementById('sdv-'+i);
-    if (vl) vl.textContent = v;
-  });
-}
-
-function renderRecent(data) {
-  const completes = data.filter(d => d.event==='module_complete')
-    .sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''))
-    .slice(0,20);
-  if (!completes.length) return;
-
-  const modClass = m => m&&m.includes('Cyber')?'mod-1':m&&m.includes('CV')?'mod-2':m&&m.includes('Manager')?'mod-3':'mod-4';
-  const modShort = m => m&&m.includes('Cyber')?'M1':m&&m.includes('CV')?'M2':m&&m.includes('Manager')?'M3':'M4';
-  const scoreColor = p => p>=80?'#22c55e':p>=60?'#f59e0b':'#ef4444';
-
-  document.getElementById('recent-count').textContent = 'Last ' + completes.length;
-  let html = '';
-  completes.forEach((d,i) => {
-    const p = d.pct||0;
-    const dur = d.duration_seconds ? Math.round(d.duration_seconds/60)+'m' : '—';
-    const ts = d.timestamp ? new Date(d.timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '—';
-    const initials = String.fromCharCode(65 + (i % 26));
-    html += `<div class="session-row">
-      <div class="sess-avatar">${initials}</div>
-      <div class="sess-info">
-        <div class="sess-module"><span class="mod-badge ${modClass(d.module)}">${modShort(d.module)}</span> ${(d.module||'Unknown').substring(0,28)}</div>
-        <div class="sess-time">${ts}</div>
-      </div>
-      <div>
-        <div class="sess-score" style="color:${scoreColor(p)}">${d.score||0}/${d.total||5}</div>
-        <div class="sess-dur">${dur}</div>
-      </div>
+    const col = i>=4?'#22c55e':i===3?'#f59e0b':'#ef4444';
+    html += `<div class="sc-col">
+      <div class="sc-outer"><div class="sc-inner" style="height:${pct}%;background:${col}"></div></div>
+      <div class="sc-lbl">${i}</div><div class="sc-val">${v}</div>
     </div>`;
   });
-  document.getElementById('recent-panel').innerHTML = html;
+  html += `</div><div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:10px;text-align:center">Score out of 5 · green=4-5 · amber=3 · red=0-2</div>`;
+  document.getElementById(targetId).innerHTML = html;
 }
 
-function renderHardest(data) {
-  const choices = data.filter(d => d.event==='choice');
-  if (choices.length < 5) return;
+// ── SCENES ──
+function renderScenes(data) {
+  document.getElementById('left-title').textContent  = 'Choice Distribution';
+  document.getElementById('left-sub').textContent    = 'What each scene looked like';
+  document.getElementById('right-title').textContent = 'Score Distribution';
+  document.getElementById('right-sub').textContent   = 'How participants scored';
 
-  // Find scenes with highest wrong rate
+  const choices = data.filter(d => d.event==='choice');
+  if (!choices.length) {
+    document.getElementById('left-body').innerHTML = `<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">No choices recorded yet</div></div>`;
+    renderScoreDist(data,'right-body'); return;
+  }
   const scenes = {};
   choices.forEach(d => {
-    const key = (d.scene_title || d.chat_person || d.email_from || ('Scene ' + ((d.scene||0)+1))) + '';
-    if (!scenes[key]) scenes[key] = { correct:0, total:0 };
+    const key = d.scene_title || ('Scene ' + ((d.scene||0)+1));
+    if (!scenes[key]) scenes[key]={A:0,B:0,C:0,total:0};
+    const opt=(d.option||'').toString().toUpperCase().charAt(0);
+    if(scenes[key][opt]!==undefined) scenes[key][opt]++;
     scenes[key].total++;
-    if (d.correct) scenes[key].correct++;
   });
+  let html='';
+  Object.entries(scenes).slice(0,6).forEach(([label,counts]) => {
+    const total=counts.total||1;
+    html+=`<div class="scene-row"><div class="scene-row-label">${label.substring(0,38)}<span>${total} responses</span></div><div class="opt-bars">`;
+    ['A','B','C'].forEach(opt => {
+      const pct=Math.round((counts[opt]||0)/total*100);
+      const cls=opt==='A'?'bad':opt==='B'?'best':'warn';
+      html+=`<div class="opt-row"><div class="opt-key">${opt}</div><div class="opt-bar-wrap"><div class="opt-bar ${cls}" style="width:${pct}%">${pct>18?pct+'%':''}</div></div><div class="opt-pct">${pct}%</div></div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('left-body').innerHTML=html;
+  renderScoreDist(data,'right-body');
+}
 
-  const ranked = Object.entries(scenes)
-    .filter(([,v]) => v.total >= 2)
-    .map(([k,v]) => ({ label:k, wrongPct: Math.round((1-v.correct/v.total)*100), total:v.total }))
-    .sort((a,b) => b.wrongPct - a.wrongPct)
-    .slice(0,5);
-
-  if (!ranked.length) return;
-
-  let html = '<div style="margin-bottom:8px;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px">HIGHEST WRONG-ANSWER RATE → PRIORITY TRAINING GAPS</div>';
-  ranked.forEach((r,i) => {
-    const col = r.wrongPct>=70?'#ef4444':r.wrongPct>=50?'#f59e0b':'#22c55e';
-    html += `<div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-        <span style="color:var(--text);font-weight:600">${i+1}. ${r.label.substring(0,42)}</span>
-        <span style="font-family:var(--mono);font-size:11px;color:${col};font-weight:700">${r.wrongPct}% wrong</span>
+// ── SCORES ──
+function renderScores(data) {
+  document.getElementById('left-title').textContent  = 'Score Distribution';
+  document.getElementById('right-title').textContent = 'Completion Summary';
+  renderScoreDist(data,'left-body');
+  const completes=data.filter(d=>d.event==='module_complete');
+  const starts=data.filter(d=>d.event==='module_start');
+  const rate=starts.length?Math.round(completes.length/starts.length*100):0;
+  document.getElementById('right-body').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:6px">
+        <span style="font-size:13px;color:var(--muted)">Completion rate</span>
+        <span style="font-family:var(--mono);font-weight:700;color:${rate>=80?'var(--green)':rate>=50?'var(--amber)':'var(--danger)'}">${rate}%</span>
       </div>
-      <div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${r.wrongPct}%;background:${col};border-radius:4px;transition:width .8s ease"></div>
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:6px">
+        <span style="font-size:13px;color:var(--muted)">Started</span>
+        <span style="font-family:var(--mono);font-weight:700;color:var(--text)">${starts.length}</span>
       </div>
-      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px">${r.total} responses</div>
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:6px">
+        <span style="font-size:13px;color:var(--muted)">Completed</span>
+        <span style="font-family:var(--mono);font-weight:700;color:var(--text)">${completes.length}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:6px">
+        <span style="font-size:13px;color:var(--muted)">Did not finish</span>
+        <span style="font-family:var(--mono);font-weight:700;color:var(--amber)">${starts.length-completes.length}</span>
+      </div>
+    </div>`;
+}
+
+// ── HARDEST ──
+function renderHardest(data) {
+  document.getElementById('left-title').textContent  = 'Training Gaps';
+  document.getElementById('left-sub').textContent    = 'Highest wrong-answer rate';
+  document.getElementById('right-title').textContent = 'Quick Wins';
+  document.getElementById('right-sub').textContent   = 'Best performing scenes';
+
+  const choices=data.filter(d=>d.event==='choice');
+  if(choices.length<3){
+    document.getElementById('left-body').innerHTML=`<div class="empty"><div class="empty-icon">🎯</div><div class="empty-title">Need more responses</div><div class="empty-sub">Training gap analysis appears once at least 3 choices are recorded.</div></div>`;
+    document.getElementById('right-body').innerHTML=`<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Awaiting data</div></div>`;
+    return;
+  }
+  const scenes={};
+  choices.forEach(d=>{
+    const key=d.scene_title||('Scene '+((d.scene||0)+1));
+    if(!scenes[key])scenes[key]={correct:0,total:0};
+    scenes[key].total++;
+    if(d.correct)scenes[key].correct++;
+  });
+  const ranked=Object.entries(scenes).filter(([,v])=>v.total>=2)
+    .map(([k,v])=>({label:k,wrongPct:Math.round((1-v.correct/v.total)*100),correctPct:Math.round(v.correct/v.total*100),total:v.total}))
+    .sort((a,b)=>b.wrongPct-a.wrongPct);
+
+  // Hardest (left)
+  let lhtml='<div style="margin-bottom:10px;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px">FOCUS YOUR DEBRIEF ON THESE SCENES</div>';
+  ranked.slice(0,5).forEach((r,i)=>{
+    const col=r.wrongPct>=70?'#ef4444':r.wrongPct>=50?'#f59e0b':'#22c55e';
+    lhtml+=`<div class="hard-row">
+      <div class="hard-label"><span style="font-size:12px;font-weight:600">${i+1}. ${r.label.substring(0,36)}</span><span style="font-family:var(--mono);font-size:11px;font-weight:700;color:${col}">${r.wrongPct}% wrong</span></div>
+      <div class="hard-bar-wrap"><div class="hard-bar" style="width:${r.wrongPct}%;background:${col}"></div></div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:3px">${r.total} responses</div>
     </div>`;
   });
-  document.getElementById('hardest-panel').innerHTML = html;
+  document.getElementById('left-body').innerHTML=lhtml;
+
+  // Best (right)
+  const best=[...ranked].sort((a,b)=>b.correctPct-a.correctPct);
+  let rhtml='<div style="margin-bottom:10px;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px">CONCEPTS WELL UNDERSTOOD</div>';
+  best.slice(0,5).forEach((r,i)=>{
+    rhtml+=`<div class="hard-row">
+      <div class="hard-label"><span style="font-size:12px;font-weight:600">${i+1}. ${r.label.substring(0,36)}</span><span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green)">${r.correctPct}% correct</span></div>
+      <div class="hard-bar-wrap"><div class="hard-bar" style="width:${r.correctPct}%;background:var(--green)"></div></div>
+    </div>`;
+  });
+  document.getElementById('right-body').innerHTML=rhtml;
 }
+
+// ── EXPORT CSV ──
+window.exportCSV = () => {
+  const data=getFiltered();
+  const completes=data.filter(d=>d.event==='module_complete');
+  const starts=data.filter(d=>d.event==='module_start');
+  const choices=data.filter(d=>d.event==='choice');
+
+  const bySession={};
+  data.forEach(d=>{
+    if(!bySession[d.session_id])bySession[d.session_id]={start:null,complete:null,choices:[]};
+    if(d.event==='module_start')bySession[d.session_id].start=d;
+    if(d.event==='module_complete')bySession[d.session_id].complete=d;
+    if(d.event==='choice')bySession[d.session_id].choices.push(d);
+  });
+
+  let csv='Session,Participant Name,Department,Module,Score,Pct,Duration(s),Started,Completed\n';
+  Object.values(bySession).forEach(s=>{
+    const row=[
+      currentSession?.name||'Unknown Session',
+      s.start?.participant_name||'Anonymous',
+      s.start?.department||'',
+      s.complete?.module||s.start?.module||'',
+      s.complete?.score||'',
+      s.complete?.pct||'',
+      s.complete?.duration_seconds||'',
+      s.start?.timestamp||'',
+      s.complete?.timestamp||''
+    ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
+    csv+=row+'\n';
+  });
+
+  // Also add choices sheet
+  csv+='\nScene Choices\nSession,Participant,Scene,Option,Correct,Timestamp\n';
+  choices.forEach(c=>{
+    const start=starts.find(s=>s.session_id===c.session_id);
+    const row=[
+      currentSession?.name||'Unknown Session',
+      start?.participant_name||'Anonymous',
+      c.scene_title||('Scene '+(c.scene+1)),
+      c.option||'',
+      c.correct?'Yes':'No',
+      c.timestamp||''
+    ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',');
+    csv+=row+'\n';
+  });
+
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`SYSTRA_Training_${(currentSession?.name||'Export').replace(/[^a-z0-9]/gi,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+window.exportJSON = () => {
+  const data=getFiltered();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`SYSTRA_Training_${(currentSession?.name||'Export').replace(/[^a-z0-9]/gi,'_')}_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+window.loadData = () => {};
+
+// ── INIT ──
+loadSession();
 </script>
 </body>
 </html>
